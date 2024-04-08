@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Peter Varnai</title>
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        p {
+            padding-top: 38px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            position: absolute;
+
+            display: flex;
+            /*display: none;*/
+
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #menu-points {
+            /*transform: translate(-160px, -80px) rotate(-8deg) skew(-4deg, 30deg);*/
+            transform: translate(-160px, -210px);
+        }
+
+
+        button {
+            font-family: "Arial Black", serif;
+            color: #000000;
+            background-color: rgba(255, 255, 255, 0);
+            border: none;
+            /*text-align: center;*/
+            font-size: 3em;
+            cursor: pointer;
+            -webkit-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 0;
+        }
+
+        #peter-title-mobile {
+            display: none;
+            position: absolute;
+            top: 23px;
+            left: 23px;
+        }
+
+        #peter-title-dt {
+            display: inline-block;
+        }
+
+
+        .works-submenu-container {
+            width: 280px;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 12px 0;
+        }
+
+        .works-submenu {
+            font-family: Arial, serif;
+            font-size: 1.2em;
+            padding: 0 18px 4px 4px;
+            text-align: left;
+        }
+
+        .commissioned-work {
+            padding-left: 12px;
+            color: #393939;
+        }
+
+        #about-window {
+            background-color: rgba(255, 255, 255, 0.73);
+            width: 350px;
+            position: absolute;
+            padding: 25px;
+            height: 70%;
+            left: 10%;
+            overflow: scroll;
+            display: none;
+            flex-direction: column;
+        }
+
+
+        .exhibitions-list li {
+            padding-top: 9px;
+        }
+
+        th {
+            text-align: left;
+            vertical-align: top;
+        }
+
+        tr {
+            height: 32px;
+            vertical-align: top;
+        }
+
+        .location-cell {
+            text-align: right;
+            color: #6e6e6e;
+            font-size: 0.85em;
+        }
+
+
+        #works-window {
+            background-color: rgba(255, 255, 255, 0.73);
+            width: 70%;
+            position: absolute;
+            padding: 25px;
+            height: 80%;
+            /*left: 10%;*/
+            overflow: scroll;
+            display: none;
+            flex-direction: column;
+            max-width: 960px;
+        }
+
+
+        #close-works-btn, #close-about-btn {
+            font-family: Arial, serif;
+            font-size: 1.2em;
+            margin-left: auto;
+            padding-bottom: 41px;
+        }
+
+
+        .project-panel-info {
+            display: flex;
+            flex-direction: row;
+        }
+
+
+        #images-panel {
+            height: 100%;
+            width: 60%;
+        }
+
+        #description-panel {
+            height: 100%;
+            width: 40%;
+            margin: 0 0 0 18px;
+        }
+
+        #concept-panel {
+            padding-top: 24px;
+        }
+
+        .description-text {
+            padding: 0 0 8px 0;
+            margin: 0;
+        }
+
+        .details-title {
+            color: #7a7a7a;
+            font-size: 0.8em;
+            padding: 0 8px;
+            text-align: right;
+        }
+
+        .details-content {
+            font-style: italic;
+        }
+
+        .primary-image {
+            width: 100%;
+        }
+
+        .thumbnail-image {
+            width: 20%;
+            margin-right: 4px;
+        }
+
+
+        @media (max-width: 640px) {
+
+            .container {
+                justify-content: flex-end;
+                align-items: flex-end;
+            }
+
+
+            #peter-title-mobile {
+                display: block;
+            }
+
+
+            #peter-title-dt {
+                display: none;
+            }
+
+            .menu-containers {
+                height: 55px;
+            }
+
+            ul {
+                padding: 0 0 28px 0;
+            }
+
+            .works-submenu-container {
+                padding: 0;
+                height: 300px;
+            }
+
+            .works-submenu {
+                text-align: right;
+                font-size: 1.5em;
+            }
+
+            #menu-points {
+                transform: none;
+                text-align: right;
+            }
+
+            #top-works-menupoint {
+                display: none;
+            }
+
+
+            #bottom-works-menupoint {
+                display: inline-block;
+                padding-bottom: 12px;
+            }
+
+            .commissioned-work {
+                padding-left: 0;
+                padding-right: 12px;
+            }
+
+            #works-window {
+                width: 98%;
+                height: 86%;
+            }
+
+            .project-panel-info {
+                flex-direction: column;
+            }
+
+            #images-panel {
+                width: 100%;
+            }
+
+            #details-table {
+                margin: 44px 0 7px 23px;
+                font-size: 1.2em;
+            }
+
+            #description-panel {
+                margin: 0;
+                width: 100%;
+            }
+
+            .description-text {
+                margin: 0 23px;
+            }
+
+            #concept-panel{
+                font-size: 1.2em;
+            }
+
+
+        }
+
+    </style>
+  <script type="module" crossorigin src="/assets/index-DHSt8Zm2.js"></script>
+</head>
+<body>
+
+<h1 id="peter-title-mobile" style="color: black">Peter <br>Várnai</h1>
+<div class="container">
+    <div id="menu-points">
+        <ul>
+            <li>
+                <h1 id="peter-title-dt">Peter Várnai</h1><br>
+                <button id="top-works-menupoint" class="menu-points">works</button>
+                <div class="works-submenu-container">
+                    <ul>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('machaona79')" class="works-submenu">Machaona 79
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('slugsNTongues')" class="works-submenu">
+                                Slugs'n'tongues
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('molar')" class="works-submenu">Molar</button>
+                        </li>
+                        <!--                        <li>-->
+                        <!--                            <button onclick="worksSubmenuOnClick('molar')" class="works-submenu">Molar</button>-->
+                        <!--                        </li>-->
+                        <li>
+                            <button onclick="worksSubmenuOnClick('pendragonBag')"
+                                    class="works-submenu commissioned-work">Ordained
+                                Hardware - Pendragon Bag spot
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('carCrash')" class="works-submenu">Car Crash</button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('ventureInTL')" class="works-submenu">Venture in the
+                                lavatory
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('instagramPlug')" class="works-submenu">@peter
+                                varnai_animations
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('program')" class="works-submenu">PROGRAM</button>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="menu-containers">
+                <button id="bottom-works-menupoint" class="menu-points" onclick="toggleAboutWindow()">about</button>
+            </li>
+        </ul>
+    </div>
+
+    <div id="works-window" style="display: none">
+        <button id="close-works-btn" onclick="toggleWorksWindow()">close</button>
+        <div class="project-panel-info">
+            <div class="images-panel" id="images-panel">
+            </div>
+            <div id="description-panel">
+                <table id="details-table"></table>
+                <div id="concept-panel"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about-window" style="display: none">
+        <button id="close-about-btn" onclick="toggleAboutWindow()">close</button>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's
+            standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
+            make
+            a type specimen book. It has survived not only five centuries, but also the leap into electronic
+            typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+            containing
+            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+            versions
+            of Lorem Ipsum.</p>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's
+            standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
+            make
+            a type specimen book. It has survived not only five centuries, but also the leap into electronic
+            typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
+            containing
+            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
+            versions
+            of Lorem Ipsum.</p>
+        <table class="exhibitions-list">
+            <tr>
+                <th colspan="2">exhibitions, screenings, achievments</th>
+            </tr>
+            <tr>
+                <th colspan="2">2023</th>
+            </tr>
+            <tr>
+                <td>Best Austrian Animation Festival</td>
+                <td class="location-cell">Vienna, AT</td>
+            </tr>
+            <tr>
+                <td>Tricky-women Film Festival</td>
+                <td class="location-cell">Vienna, AT</td>
+            </tr>
+            <tr>
+                <td>Limbs'n'tools</td>
+                <td class="location-cell">discotec, Vienna, AT</td>
+            </tr>
+            <tr>
+                <th colspan="2"> founded <a href="https://discotec.art/archive">discotec</a></th>
+            </tr>
+            <tr>
+                <td>Freakylischious</td>
+                <td class="location-cell">Parallel Artfair, Vienna, AT</td>
+            </tr>
+            <tr>
+                <th colspan="2">2022</th>
+            </tr>
+            <tr>
+                <th colspan="2">Finished stuedies at the Univercity of Applied Arts - Digital Arts</th>
+            </tr>
+            <tr>
+                <td>FINALS 2022 – Diploma works</td>
+                <td class="location-cell">Digital Arts Class, Vienna, AT</td>
+            </tr>
+            <tr>
+                <td>
+                    <a href="https://digitalekunst.ac.at/archiv/ausstellungen-workshops/2022/re-pairing-future-aveiro/index.html">Re-Pairing
+                        Future</a></td>
+                <td class="location-cell">CRIATECH Festival, Aveiro, Pt</td>
+            </tr>
+            <tr>
+                <td>The mirror and its neighbour</td>
+                <td class="location-cell">12-14 Contemporary, Vienna, AT</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+</div>
+<script>
+
+    const db = {
+        'carCrash': {
+            'pictures': ['3 cars poster.jpg', '4 cars poster.jpg', 'cataloge image 2.jpg', 'GOD poster.jpg', 'god 2.jpg'],
+            'concept': ['Cars, symbols of human progress, technology, science, and worshiping rituals, an activity ' +
+            'rooted in the anchientest of human history, merge only in the strangest of realms. In this short ' +
+            'film by Peter Várnai, the viewer can see a 3-chapter story.', ' A group of cars are going through a hazy, ' +
+            'dreamlike atmosphere, easing them into the worshiping ritual that takes place in the second chapter. ',
+                'The point of the ritual is to summon a car deity, which reveals itself at the end.', 'The cars ' +
+                'dance in the noise, the undefined media that represents the fragile consistency of their reality.'],
+            'details': {
+                'title': 'Car Crash',
+                'medium': 'animated 210 dome video',
+                'duration': '6min'
+            }
+        },
+        'slugsNTongues': {
+            'pictures':
+                ["slugs'n'tongues 1.jpg", "slugs'n'tongues 3.jpg", "slugs'n'tongues 4.jpg"],
+            'concept':
+                ['The video is showing a fantasmatic parallel ' +
+                'reality where multispecies morph between slugs and ' +
+                'tongues like microbes while producing velar, ' +
+                'uvular and glottal noises and performing love poems.',
+                    'This project was developed in close collaboration with Margareta Klose'],
+            'details': {
+                'title': "Slugs'n'tongues",
+                'medium': 'animated short movie',
+                'duration': '4min 32sec',
+            }
+        },
+        'machaona79': {
+            'pictures': ['machaone_79.jpg', 'machaone_79_-b.jpg'],
+            'concept': ['We were born within the muddy swamp compost where our ancestors died to fertilize the urgent ' +
+            'transition zone of our marshland. Waking up in our eggs saturated with our microbiomes ' +
+            'we unfold our thyroid face wings of the swallowtail: Papilio Machaon.', 'We are cracking our eggs ' +
+            'open with our legs and are flapping with the knees, steering through the smog with our face ' +
+            'wings named after Machaon, the healer.', ' We are Machaona 79, the Generation of the wetlands. ' +
+            'We witness a reality of burning skyscrapers and forests, embodying a last scene of the ' +
+            'Capitalocene and Anthropocene. While balancing in this troubled, dangerous world we are poetically ' +
+            'shrieking, grieving, and healing with our spiral tongues before dying and becoming with the muddy ' +
+            'swamp compost.', ' A bouncing jelly on an abandoned tennis court gives the rhythm for our urgent becoming-with.' +
+            'This project was developed in close collaboration with Margareta Klose'],
+            'details': {
+                'title': 'Machaona 79',
+                'medium': 'animated short movie',
+                'duration': '1min 40sec'
+            },
+        },
+        'molar': {
+            'pictures': ['MOLAR 1.jpg', 'MOLAR 2.jpg', 'MOLAR 3.jpg'],
+            'concept': ['A molar is woken up in the kitchen by music playing from a dancing microwave. The surreal, ' +
+            'fantasmatic dream scene is emphasized  by a singing voice warbling a song.', '"',
+                'window frame shadow gliding up the tooth',
+                'the molar’s asleep zz',
+                'zzz zzz…',
+                'forky clicks and singing',
+                'the microwave is sloughing the tooth’s skin',
+                'revealing the eye in pallid morning light',
+                'blink', '  "'],
+            'details': {
+                'title': 'Molar',
+                'medium': 'animated short movie',
+                'duration': '48sec'
+            },
+
+        },
+        'ventureInTL': {
+            'pictures': ['1 parallel kezdet021.jpg', '2 parallel kezdet0218.jpg', '3 parallel kezdet0218.jpg', '4 parallel kezdet0218.jpg'],
+            'concept': '',
+            'details': {
+                'title': 'Venture in the lavatory',
+                'medium': 'animated short movie',
+                'duration': '52sec'
+            }
+        }
+    }
+
+
+    function worksSubmenuOnClick(projectName) {
+        toggleWorksWindow()
+        loadProjectInfo(projectName)
+    }
+
+
+    function loadProjectInfo(projectName) {
+
+        // adding images
+        const project = db[projectName]
+        project.pictures.forEach((image, index) => {
+            const img = new Image()
+            img.src = `${window.location.href}static/images/${projectName}/${image}`
+
+            if (index === 0) {
+                img.className = 'primary-image'
+            } else {
+                img.className = 'thumbnail-image'
+                img.setAttribute('onclick', 'changePrimaryImage(this)')
+            }
+
+            document.getElementById('images-panel').appendChild(img)
+        })
+
+
+        // adding concept and details
+        const descPanel = document.getElementById('description-panel')
+
+
+        // filling the details table with content from db
+        // const detailsTable = document.createElement('table')
+        const detailsTable = document.getElementById('details-table')
+        // descPanel.appendChild(detailsTable)
+        for (const [key, val] of Object.entries(project.details)) {
+            const detailsRow = document.createElement('tr')
+            detailsRow.style.height = '20px'
+
+            const titleTd = document.createElement('td')
+            const discTd = document.createElement('td')
+
+            titleTd.className = 'details-title'
+            titleTd.textContent = `${key}: `
+
+            discTd.className = 'details-content'
+            discTd.textContent = `${val}`
+
+            detailsRow.appendChild(titleTd)
+            detailsRow.appendChild(discTd)
+
+            detailsTable.appendChild(detailsRow)
+        }
+
+        const conceptPanel = document.getElementById('concept-panel')
+        db[projectName].concept.forEach(text => {
+            const conceptText = document.createElement('p')
+            conceptText.textContent = text
+            conceptText.className = 'description-text'
+            conceptPanel.appendChild(conceptText)
+        })
+    }
+
+
+    function toggleWorksWindow() {
+        const worksWindow = document.getElementById('works-window')
+        const menuPoints = document.getElementById('menu-points')
+        const peterTitle = document.getElementById('peter-title-mobile')
+        const container = document.querySelector(".container")
+
+        if (worksWindow.style.display === 'none') {
+            container.style.cssText += `
+            justify-content: center;
+            align-items: center;
+            `
+            peterTitle.style.color = 'white'
+            worksWindow.style.display = 'flex'
+            menuPoints.style.display = 'none'
+        } else {
+            container.style.removeProperty('justify-content')
+            container.style.removeProperty('align-items')
+            document.getElementById('images-panel').innerHTML = ''
+            document.getElementById('details-table').innerHTML = ''
+            document.getElementById('concept-panel').innerHTML = ''
+            peterTitle.style.color = 'black'
+            worksWindow.style.display = 'none'
+            menuPoints.style.display = 'block'
+        }
+    }
+
+
+    function toggleAboutWindow() {
+
+        const aboutWindow = document.getElementById('about-window')
+        const menuPoints = document.getElementById('menu-points')
+        const peterTitle = document.getElementById('peter-title-mobile')
+        const container = document.querySelector(".container")
+
+        if (aboutWindow.style.display === 'none') {
+            container.style.cssText += `
+            justify-content: center;
+            align-items: center;
+            `
+            peterTitle.style.color = 'white'
+            aboutWindow.style.display = 'flex'
+            menuPoints.style.display = 'none'
+        } else {
+            container.style.removeProperty('justify-content')
+            container.style.removeProperty('align-items')
+
+            peterTitle.style.color = 'black'
+            aboutWindow.style.display = 'none'
+            menuPoints.style.display = 'block'
+        }
+    }
+
+
+    function changePrimaryImage(clickedImage) {
+        let primaryImage = document.querySelector('.primary-image')
+
+        let clickedImageSrc = primaryImage.src
+        primaryImage.src = clickedImage.src
+        clickedImage.src = clickedImageSrc
+    }
+
+
+</script>
+</body>
+</html>
