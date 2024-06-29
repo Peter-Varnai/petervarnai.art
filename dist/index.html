@@ -2,12 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--    TODO: add that little picture at the browser tab-->
     <title>Peter Varnai</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, orientation=portrait">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
 
+
         body {
-            margin: 0;
-            font-family: Arial, serif;
+            margin: 0;F
+            padding: 0;
+            font-family: "Work Sans", sans-serif;
+            overflow: clip;
         }
 
         a {
@@ -15,12 +25,42 @@
             color: black;
         }
 
+        .collaborator-link {
+            font-style: italic;
+        }
+
         p {
-            padding-top: 38px;
+            /*padding-top: 38px;*/
         }
 
         h1 {
             margin: 0;
+        }
+
+        @keyframes spinning {
+            0% {
+                transform: rotate(0deg) scale(0.8);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.3);
+            }
+            100% {
+                transform: rotate(360deg) scale(0.8);
+            }
+        }
+
+        .loading-screen-container {
+            transform: translate(191px, -57px);
+        }
+
+        #loadingScreen {
+            padding: 0;
+            margin: 0;
+            font-size: 1.2em;
+            animation-name: spinning;
+            animation-duration: 4s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
         }
 
         .container {
@@ -41,8 +81,14 @@
         }
 
 
+        #top-works-menupoint {
+            cursor: default;
+        }
+
+
         button {
-            font-family: "Arial Black", serif;
+            font-family: "Work Sans", serif-serif;
+            font-weight: 800;
             color: #000000;
             background-color: rgba(255, 255, 255, 0);
             border: none;
@@ -53,14 +99,17 @@
             transition: all 0.5s ease;
         }
 
+
         ul {
             list-style-type: none;
             padding: 0;
         }
 
+
         li {
             padding: 0;
         }
+
 
         #peter-title-mobile {
             display: none;
@@ -68,6 +117,7 @@
             top: 23px;
             left: 23px;
         }
+
 
         #peter-title-dt {
             display: inline-block;
@@ -82,7 +132,7 @@
         }
 
         .works-submenu {
-            font-family: Arial, serif;
+            font-weight: 500;
             font-size: 1.2em;
             padding: 0 18px 4px 4px;
             text-align: left;
@@ -95,7 +145,8 @@
 
         #about-window {
             background-color: rgba(255, 255, 255, 0.73);
-            width: 350px;
+            width: 35%;
+            max-width: 800px;
             position: absolute;
             padding: 25px;
             height: 70%;
@@ -105,9 +156,16 @@
             flex-direction: column;
         }
 
+        #about-window::-webkit-scrollbar {
+            display: none;
+        }
 
         .exhibitions-list li {
             padding-top: 9px;
+        }
+
+        .exhibitions-list {
+            padding: 0 20px;
         }
 
         th {
@@ -118,6 +176,11 @@
         tr {
             height: 32px;
             vertical-align: top;
+        }
+
+        .details-title {
+            font-weight: 600;
+            font-size: 1.2em;
         }
 
         .location-cell {
@@ -140,9 +203,16 @@
             max-width: 960px;
         }
 
+        #works-window::-webkit-scrollbar {
+            display: none;
+            /*width: 0;*/
+            /*height: 0;*/
+            /*background: transparent;*/
+        }
+
 
         #close-works-btn, #close-about-btn {
-            font-family: Arial, serif;
+            font-family: "Work Sans", sans-serif;
             font-size: 1.2em;
             margin-left: auto;
             padding-bottom: 41px;
@@ -156,7 +226,7 @@
 
 
         #images-panel {
-            height: 100%;
+            /*height: 100%;*/
             width: 60%;
         }
 
@@ -167,7 +237,7 @@
         }
 
         #concept-panel {
-            padding-top: 24px;
+            padding: 24px 0 36px;
         }
 
         .description-text {
@@ -175,7 +245,7 @@
             margin: 0;
         }
 
-        .details-title {
+        .details-type {
             color: #7a7a7a;
             font-size: 0.8em;
             padding: 0 8px;
@@ -203,6 +273,19 @@
                 align-items: flex-end;
             }
 
+            .loading-screen-container {
+                /*transform: translate(191px,-57px);*/
+            }
+
+            #loadingScreen {
+                /*padding: 0;*/
+                /*margin: 0;*/
+                /*font-size: 1.2em;*/
+                /*animation-name: spinning;*/
+                /*animation-duration: 4s;*/
+                /*animation-iteration-count: infinite;*/
+                /*animation-timing-function: linear;*/
+            }
 
             #peter-title-mobile {
                 display: block;
@@ -218,12 +301,20 @@
             }
 
             ul {
-                padding: 0 0 28px 0;
+                padding: 0 0 52px 0;
+            }
+
+            .works-list {
+                padding: 0;
+            }
+
+            #close-works-btn, #close-about-btn {
+                padding: 40px 40px 30px 0;
             }
 
             .works-submenu-container {
                 padding: 0;
-                height: 300px;
+                /*height: 300px;*/
             }
 
             .works-submenu {
@@ -252,8 +343,11 @@
             }
 
             #works-window {
-                width: 98%;
-                height: 86%;
+                width: 100%;
+                height: 100%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
 
             .project-panel-info {
@@ -278,48 +372,68 @@
                 margin: 0 23px;
             }
 
-            #concept-panel{
+            #concept-panel {
                 font-size: 1.2em;
+            }
+
+            #about-window {
+                /*left: auto;*/
+                width: 100%;
+                height: 100%;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            #about-window p {
+                padding: 0 12px;
             }
 
 
         }
 
     </style>
-  <script type="module" crossorigin src="/assets/index-DHSt8Zm2.js"></script>
+  <script type="module" crossorigin src="/assets/index-B6m6OI4X.js"></script>
 </head>
 <body>
 
 <h1 id="peter-title-mobile" style="color: black">Peter <br>Várnai</h1>
-<div class="container">
+<div id="" class="container">
+    <div class="loading-screen-container">
+        <p id="loadingScreen"></p>
+    </div>
+</div>
+<div style="z-index: 2;" class="container">
     <div id="menu-points">
         <ul>
             <li>
                 <h1 id="peter-title-dt">Peter Várnai</h1><br>
                 <button id="top-works-menupoint" class="menu-points">works</button>
                 <div class="works-submenu-container">
-                    <ul>
+                    <ul class="works-list">
                         <li>
                             <button onclick="worksSubmenuOnClick('machaona79')" class="works-submenu">Machaona 79
                             </button>
                         </li>
                         <li>
                             <button onclick="worksSubmenuOnClick('slugsNTongues')" class="works-submenu">
-                                Slugs'n'tongues
+                                slugs'n'tongues
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="worksSubmenuOnClick('roundCity')" class="works-submenu commissioned-work">
+                                Round City
                             </button>
                         </li>
                         <li>
                             <button onclick="worksSubmenuOnClick('molar')" class="works-submenu">Molar</button>
                         </li>
-                        <!--                        <li>-->
-                        <!--                            <button onclick="worksSubmenuOnClick('molar')" class="works-submenu">Molar</button>-->
-                        <!--                        </li>-->
-                        <li>
-                            <button onclick="worksSubmenuOnClick('pendragonBag')"
-                                    class="works-submenu commissioned-work">Ordained
-                                Hardware - Pendragon Bag spot
-                            </button>
-                        </li>
+<!--                        <li>-->
+<!--                            <button onclick="worksSubmenuOnClick('pendragonBag')"-->
+<!--                                    class="works-submenu commissioned-work">Ordained-->
+<!--                                Hardware - Pendragon Bag spot-->
+<!--                            </button>-->
+<!--                        </li>-->
                         <li>
                             <button onclick="worksSubmenuOnClick('carCrash')" class="works-submenu">Car Crash</button>
                         </li>
@@ -329,7 +443,8 @@
                             </button>
                         </li>
                         <li>
-                            <button onclick="worksSubmenuOnClick('instagramPlug')" class="works-submenu">@peter
+                            <button onclick="window.open('https://www.instagram.com/peter.varnai_animations/', '_blank')"
+                                    class="works-submenu">@peter
                                 varnai_animations
                             </button>
                         </li>
@@ -348,6 +463,8 @@
     <div id="works-window" style="display: none">
         <button id="close-works-btn" onclick="toggleWorksWindow()">close</button>
         <div class="project-panel-info">
+            <div class="images-panel" id="video-panel">
+            </div>
             <div class="images-panel" id="images-panel">
             </div>
             <div id="description-panel">
@@ -359,59 +476,68 @@
 
     <div id="about-window" style="display: none">
         <button id="close-about-btn" onclick="toggleAboutWindow()">close</button>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-            industry's
-            standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-            make
-            a type specimen book. It has survived not only five centuries, but also the leap into electronic
-            typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
-            containing
-            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
-            versions
-            of Lorem Ipsum.</p>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-            industry's
-            standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to
-            make
-            a type specimen book. It has survived not only five centuries, but also the leap into electronic
-            typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets
-            containing
-            Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including
-            versions
-            of Lorem Ipsum.</p>
+        <p>Peter Várnai is a media artist, web-developer and cultural worker based in Vienna, Austria.
+            He finished studying Digital Arts (prof. Ruth Schnell, Univercity of Applied Arts Vienna)
+            and earned an MA in arts
+        </p>
+        <p>
+            His animations are narratives that frequently
+            contain humor, take place in novel, uncharted dimensions,
+            and are inherently ludicrous in an often bizarre way
+            that can only exist in the digital world.
+            The works of Peter are motivated by a desire to
+            bring color and surprise to both the virtual and the other reality too.
+        </p>
+        <p>Since 2023, he has been a web developer at
+            <a target="_blank" href="https://artificialmuseum.com/" rel="noreferrer">the
+                Artificial Museum</a>, specialized in augmented reality projects
+            and in embedding 3D graphics into web designs.
+        </p>
+
         <table class="exhibitions-list">
             <tr>
-                <th colspan="2">exhibitions, screenings, achievments</th>
+                <th colspan="2">selected exhibitions, screenings, achievements</th>
+            </tr>
+
+            <tr>
+                <th colspan="2">2024</th>
             </tr>
             <tr>
-                <th colspan="2">2023</th>
+                <td>WILD MEDIA Festival</td>
+                <td class="location-cell">iDMAa (International Digital Media and Art Association), Laird-Norton Center
+                    for Art and Design
+                    University, Winona State, Minnesota, USA
+                </td>
+            </tr>
+
+            <tr>
+                <th colspan="2">2023</th>fre
             </tr>
             <tr>
-                <td>Best Austrian Animation Festival</td>
+                <td><a href="https://www.trickywomen.at/en/festival/13">Tricky-women Film Festival</a></td>
                 <td class="location-cell">Vienna, AT</td>
             </tr>
             <tr>
-                <td>Tricky-women Film Festival</td>
-                <td class="location-cell">Vienna, AT</td>
+                <td><a href="https://www.festanca.sk//en/">Fest Anča</a></td>
+                <td class="location-cell">Žilina, Slovakia</td>
             </tr>
             <tr>
-                <td>Limbs'n'tools</td>
+                <td><a href="https://discotec.art/archive">Limbs'n'tools</a></td>
                 <td class="location-cell">discotec, Vienna, AT</td>
             </tr>
             <tr>
-                <th colspan="2"> founded <a href="https://discotec.art/archive">discotec</a></th>
+                <th colspan="2">founding member of <a target="_blank" href="https://discotec.art/archive">discotec</a>
+                </th>
             </tr>
             <tr>
-                <td>Freakylischious</td>
+                <td><a href="https://parallelvienna.com/">freakylicious</a></td>
                 <td class="location-cell">Parallel Artfair, Vienna, AT</td>
             </tr>
             <tr>
                 <th colspan="2">2022</th>
             </tr>
             <tr>
-                <th colspan="2">Finished stuedies at the Univercity of Applied Arts - Digital Arts</th>
+                <th colspan="2">Received diploma at the University of Applied Arts Vienna - Digital Arts</th>
             </tr>
             <tr>
                 <td>FINALS 2022 – Diploma works</td>
@@ -428,45 +554,95 @@
                 <td class="location-cell">12-14 Contemporary, Vienna, AT</td>
             </tr>
             <tr>
-                <td></td>
+                <th colspan="2">earlier exhibitions</th>
+            </tr>
+            <tr>
+                <td>
+                    <a href="https://www.dieangewandte.at/aktuell/ausstellungen/ausstellungen_detail?artikel_id=1536826033981">#fuckreality</a>
+                </td>
+                <td class="location-cell">Kunstraum Niederoesterreich, Vienna, AT</td>
             </tr>
         </table>
     </div>
 </div>
+<div id="3d-scene" class="container"></div>
 <script>
+
+    const smileyArr = [
+        [':)))))))', '::))))))', ':::)))))', '::::))))', ':::::)))', '::::::))', ':::::::)', '::::::))', ':::::)))', '::::))))', ':::)))))', '::))))))', ':)))))))'],
+        [';)))))))', ';;))))))', ';;;)))))', ';;;;))))', ';;;;;)))', ';;;;;;))', ';;;;;;;)', ';;;;;;))', ';;;;;)))', ';;;;))))', ';;;)))))', ';;))))))', ';)))))))']
+    ]
+
+    const ls = document.getElementById('loadingScreen')
+    let loadRound = 0
+    let loadType = false
+
+    function loadingAnim() {
+        if (loadType) {
+            ls.innerText = smileyArr[0][loadRound]
+            loadRound++
+            if (loadRound > 12) {
+                loadType = !loadType
+                loadRound = 0
+            }
+        } else {
+            ls.innerText = smileyArr[1][loadRound]
+            loadRound++
+            if (loadRound > 12) {
+                loadType = !loadType
+                loadRound = 0
+            }
+        }
+        setTimeout(() => {
+            loadingAnim()
+        }, 90)
+    }
+
+    loadingAnim()
+</script>
+<script>
+
 
     const db = {
         'carCrash': {
             'pictures': ['3 cars poster.jpg', '4 cars poster.jpg', 'cataloge image 2.jpg', 'GOD poster.jpg', 'god 2.jpg'],
+            'videos': [],
+            'collaborators': {'Gyula Várnai': 'https://www.varnaigyula.hu/'},
             'concept': ['Cars, symbols of human progress, technology, science, and worshiping rituals, an activity ' +
             'rooted in the anchientest of human history, merge only in the strangest of realms. In this short ' +
             'film by Peter Várnai, the viewer can see a 3-chapter story.', ' A group of cars are going through a hazy, ' +
             'dreamlike atmosphere, easing them into the worshiping ritual that takes place in the second chapter. ',
                 'The point of the ritual is to summon a car deity, which reveals itself at the end.', 'The cars ' +
-                'dance in the noise, the undefined media that represents the fragile consistency of their reality.'],
+                'dance in the noise, the undefined media that represents the fragile consistency of their reality.',
+                'Sound by Gyula Várnai'],
             'details': {
                 'title': 'Car Crash',
-                'medium': 'animated 210 dome video',
-                'duration': '6min'
+                'medium': 'animated 210° dome video',
+                'duration': '6min',
+                'released': '2022'
             }
         },
         'slugsNTongues': {
             'pictures':
                 ["slugs'n'tongues 1.jpg", "slugs'n'tongues 3.jpg", "slugs'n'tongues 4.jpg"],
+            'videos': [],
             'concept':
                 ['The video is showing a fantasmatic parallel ' +
                 'reality where multispecies morph between slugs and ' +
                 'tongues like microbes while producing velar, ' +
                 'uvular and glottal noises and performing love poems.',
-                    'This project was developed in close collaboration with Margareta Klose'],
+                    'This project was developed with Margareta Klose'],
+            'collaborators': {'Margareta Klose': 'https://kojeklose.com/'},
             'details': {
-                'title': "Slugs'n'tongues",
+                'title': "slugs'n'tongues",
                 'medium': 'animated short movie',
                 'duration': '4min 32sec',
+                'released': '2023'
             }
         },
         'machaona79': {
             'pictures': ['machaone_79.jpg', 'machaone_79_-b.jpg'],
+            'videos': [],
             'concept': ['We were born within the muddy swamp compost where our ancestors died to fertilize the urgent ' +
             'transition zone of our marshland. Waking up in our eggs saturated with our microbiomes ' +
             'we unfold our thyroid face wings of the swallowtail: Papilio Machaon.', 'We are cracking our eggs ' +
@@ -476,15 +652,18 @@
             'Capitalocene and Anthropocene. While balancing in this troubled, dangerous world we are poetically ' +
             'shrieking, grieving, and healing with our spiral tongues before dying and becoming with the muddy ' +
             'swamp compost.', ' A bouncing jelly on an abandoned tennis court gives the rhythm for our urgent becoming-with.' +
-            'This project was developed in close collaboration with Margareta Klose'],
+            'This project was developed with Margareta Klose.'],
+            'collaborators': {'Margareta Klose': 'https://kojeklose.com/'},
             'details': {
                 'title': 'Machaona 79',
                 'medium': 'animated short movie',
-                'duration': '1min 40sec'
+                'duration': '1min 40sec',
+                'released': '2023'
             },
         },
         'molar': {
             'pictures': ['MOLAR 1.jpg', 'MOLAR 2.jpg', 'MOLAR 3.jpg'],
+            'videos': [],
             'concept': ['A molar is woken up in the kitchen by music playing from a dancing microwave. The surreal, ' +
             'fantasmatic dream scene is emphasized  by a singing voice warbling a song.', '"',
                 'window frame shadow gliding up the tooth',
@@ -493,23 +672,68 @@
                 'forky clicks and singing',
                 'the microwave is sloughing the tooth’s skin',
                 'revealing the eye in pallid morning light',
-                'blink', '  "'],
+                'blink', '  "', 'text and voice by Margareta Klose',],
+            'collaborators': {'Margareta Klose': 'https://kojeklose.com/'},
             'details': {
                 'title': 'Molar',
                 'medium': 'animated short movie',
-                'duration': '48sec'
+                'duration': '48sec',
+                'released': '2022'
             },
-
         },
         'ventureInTL': {
             'pictures': ['1 parallel kezdet021.jpg', '2 parallel kezdet0218.jpg', '3 parallel kezdet0218.jpg', '4 parallel kezdet0218.jpg'],
-            'concept': '',
+            'concept': ['A clump of flowers blow up from the tiles of the bathroom and goes on a journey around the space. ' +
+            'They arrive at a halt, and their buds open up in gorgeous petals revealing their actual face.' +
+            'Venture in the lavatory is an experiment mixing multiple animating techniques to tell a unique and stunning tale.',
+                'The music composed by Gyula Várnai',],
+            'collaborators': {'Gyula Várnai': 'https://www.varnaigyula.hu/'},
             'details': {
                 'title': 'Venture in the lavatory',
                 'medium': 'animated short movie',
-                'duration': '52sec'
+                'duration': '52sec',
+                'released': '2021'
+            }
+        },
+        'roundCity': {
+            'pictures': ['DSC_2026.JPG', 'DSC_2019.JPG', 'DSC_2024.JPG', 'DSC_2017.JPG', 'DSC_2022.JPG', 'DSC_2023.JPG', 'DSC_2016.JPG', 'DSC_2018.JPG',],
+            'videos': ['roundCity.webm'],
+            'concept': ['Round City is a comissionned project from Gyula Várnai. It involves a concrete-looking object installed on the wall ' +
+            'and an animated depiction of what a circular, futuristic city imagined in the Eastern Bloc during the \'70s might look like.', 'The animation' +
+            ' and the installation were prepared for the European Capital of Culture festival of Veszprem, ' +
+            'it has been on display from 2023 January till August in the Csikász Gallery.'],
+            'collaborators': {'Gyula Várnai': 'https://www.varnaigyula.hu/'},
+            'details': {
+                'title': 'commissionned work - Round City',
+                'medium': 'projected 3d animation',
+                'duration': '6min',
+                'released': '2023'
+            },
+        },
+        'program': {
+            'pictures': ['chasing_TV0208.jpg', 'totl_i1_0157.jpg'],
+            'videos': ['full_program45.webm'],
+            'concept': ["In the near future, consumerism's swelling greed will go so far as cracking. ",
+                "Smiling, winking, teeth-flashing faces with brands and slogans have been blowing the bubble of illusions. " +
+                "These commercials used for pushing around the fantasy of persons will melt from screens " +
+                "and the optimism they planted in our collective subconscious gave birth to a dense negative dimension of leftovers; " +
+                "Program is an animated short film taking place here.",
+                "Program is a surreal embodiment of violent consumerism, proposing an extract from a speculative future.",
+                'The music of the video is composed by Diana Kiss.'],
+            'collaborators': {'Diana Kiss': 'https://www.instagram.com/bassonboard/'},
+            'details': {
+                'title': 'PROGRAM',
+                'medium': 'animated short movie',
+                'duration': '1min 48sec',
+                'released': '2019'
             }
         }
+    }
+
+
+    function collaboratorLinks(text, targetWord, link) {
+        const regex = new RegExp(targetWord, "gi");
+        return text.replace(regex, '<a class="collaborator-link" target="_blank" href=' + link + '>' + targetWord + '</a>');
     }
 
 
@@ -523,6 +747,18 @@
 
         // adding images
         const project = db[projectName]
+
+        // adding the video panel to the project site
+        if (project.videos) {
+            project.videos.forEach((video, index) => {
+                const videoElement = document.createElement('video')
+                videoElement.setAttribute('src', `${window.location.href}static/videos/${projectName}/${video}`)
+                videoElement.setAttribute('controls', true)
+                videoElement.setAttribute('width', '100%')
+                document.getElementById('images-panel').appendChild(videoElement)
+            })
+        }
+
         project.pictures.forEach((image, index) => {
             const img = new Image()
             img.src = `${window.location.href}static/images/${projectName}/${image}`
@@ -539,24 +775,22 @@
 
 
         // adding concept and details
-        const descPanel = document.getElementById('description-panel')
+        // const descPanel = document.getElementById('description-panel')
 
-
-        // filling the details table with content from db
-        // const detailsTable = document.createElement('table')
         const detailsTable = document.getElementById('details-table')
-        // descPanel.appendChild(detailsTable)
         for (const [key, val] of Object.entries(project.details)) {
             const detailsRow = document.createElement('tr')
-            detailsRow.style.height = '20px'
+            detailsRow.style.height = key === 'title' ? '30px' : '20px'
 
             const titleTd = document.createElement('td')
             const discTd = document.createElement('td')
 
-            titleTd.className = 'details-title'
-            titleTd.textContent = `${key}: `
+            key === 'title' ? titleTd.className = 'title-row' : null
 
-            discTd.className = 'details-content'
+            titleTd.className = 'details-type'
+            titleTd.textContent = key === 'title' ? null : `${key}: `
+
+            discTd.className = key === 'title' ? 'details-title' : 'details-content'
             discTd.textContent = `${val}`
 
             detailsRow.appendChild(titleTd)
@@ -565,10 +799,19 @@
             detailsTable.appendChild(detailsRow)
         }
 
+
         const conceptPanel = document.getElementById('concept-panel')
-        db[projectName].concept.forEach(text => {
+        const collaborators = project.collaborators
+
+        project.concept.forEach(text => {
+            let conceptP = text
+
+            for (let key in collaborators) {
+                conceptP = collaboratorLinks(conceptP, key, collaborators[key])
+            }
+
             const conceptText = document.createElement('p')
-            conceptText.textContent = text
+            conceptText.innerHTML = conceptP
             conceptText.className = 'description-text'
             conceptPanel.appendChild(conceptText)
         })
@@ -576,12 +819,16 @@
 
 
     function toggleWorksWindow() {
+        const canvasTrgt = document.getElementById('3d-scene')
+        canvasTrgt.style.filter = 'blur(18px)'
         const worksWindow = document.getElementById('works-window')
         const menuPoints = document.getElementById('menu-points')
         const peterTitle = document.getElementById('peter-title-mobile')
         const container = document.querySelector(".container")
 
         if (worksWindow.style.display === 'none') {
+            canvasTrgt.style.filter = 'blur(18px)'
+
             container.style.cssText += `
             justify-content: center;
             align-items: center;
@@ -590,6 +837,8 @@
             worksWindow.style.display = 'flex'
             menuPoints.style.display = 'none'
         } else {
+            canvasTrgt.style.filter = 'blur(0px)'
+
             container.style.removeProperty('justify-content')
             container.style.removeProperty('align-items')
             document.getElementById('images-panel').innerHTML = ''

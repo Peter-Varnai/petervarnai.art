@@ -26,7 +26,8 @@ renderer.shadowMap.enabled = true
 
 renderer.setSize(WIDTH, HEIGHT)
 renderer.setClearColor('#000000', 1)
-document.body.appendChild(renderer.domElement)
+const canvasTrgt = document.getElementById('3d-scene')
+canvasTrgt.appendChild(renderer.domElement)
 
 
 const shadowLight = new THREE.SpotLight('#ffe5d2', 1132)
@@ -37,7 +38,7 @@ const pLight = new THREE.PointLight('#fdeaea', 24)
 
 shadowLight.castShadow = true
 shadowLight.shadow.bias = -0.001
-mql ? shadowLight.position.set(1, 20, -9) : shadowLight.position.set(12, 23, 22)
+mql ? shadowLight.position.set(1, 20, -9) : shadowLight.position.set(12, 23.3, 22)
 shadowLight.shadow.mapSize.width = 4096
 shadowLight.shadow.mapSize.height = 4096
 shadowScene.add(shadowLight)
@@ -57,7 +58,7 @@ scene.add(pLight)
 
 const gltfLoader = new GLTFLoader()
 let fireMixer, shadowFireMixer, kbbMixer, engineFire, kbbRocket, kbbRotationGroup, kbbRocketShadow, camTrgt,
-    camTrgtMixer, engineBody, engineMixer, kbbRotate, shadowMixer, shadowEngineFire, lampsMixer, interfaceLamps,
+    camTrgtMixer, engineBody, engineMixer, kbbFloats, shadowMixer, shadowEngineFire, lampsMixer, interfaceLamps,
     camTrgtMobile, engineFireShadow
 const fallAnimArr = []
 
@@ -425,6 +426,8 @@ const composer = new EffectComposer(renderer);
 const compositPass = new ShaderPass(compositShader);
 composer.addPass(compositPass)
 
+kbbFloats = true
+
 
 // Animating the glitch
 setInterval(function () {
@@ -440,14 +443,6 @@ function randFloat(min = -1, max = 1) {
 }
 
 
-kbbRotate = true
-
-
-let paused = false
-// document.getElementById('pauseAnim').addEventListener('click', function () {
-//     paused = !paused
-// })
-
 
 function toggleGlitch() {
     digitalGlitch.uniforms.byp.value === 1 ?
@@ -458,19 +453,19 @@ function toggleGlitch() {
 let glitchTillTimer = Math.random() * 32 + 5
 
 function randomGlitch(eTime) {
-    if (eTime > glitchTillTimer) {
-        const duration = Math.random() * 300
+    if (eTime > glitchTillTimer && kbbFloats) {
+        const duration = Math.random() * 600
         toggleGlitch()
         setTimeout(() => {
             toggleGlitch()
-            glitchTillTimer = Math.random() * 52 + eTime
+            glitchTillTimer = Math.random() * 32 + eTime
         }, duration)
     }
 }
 
 
 function playFall() {
-    kbbRotate = !kbbRotate
+    kbbFloats = !kbbFloats
     console.log(camTrgt.position)
 
     fallAnimArr.forEach(anim => {
@@ -481,6 +476,7 @@ function playFall() {
     engineFireShadow.children.forEach(fire => fire.visible = !fire.visible)
     console.log(camTrgt.position)
 }
+
 
 function resetFall() {
     function glitchAnim(randDelay) {
@@ -500,7 +496,7 @@ function resetFall() {
             anim.paused = true
         })
 
-        kbbRotate = !kbbRotate
+        kbbFloats = !kbbFloats
 
         engineFire.children.forEach(fire => fire.visible = !fire.visible)
         engineFireShadow.children.forEach(fire => fire.visible = !fire.visible)
@@ -508,7 +504,6 @@ function resetFall() {
 
     const randGlitchDelay = Math.random() * 800 + 1
     fallAnimReset(randGlitchDelay)
-
 }
 
 
@@ -525,7 +520,7 @@ window.addEventListener('resize', function () {
     // page resizing adjustments
     camera.lookAt(mql ? camTrgtMobile.position : camTrgt.position)
     camera.fov = mql ? 16 : 13
-    mql ? shadowLight.position.set(1, 20, -9) : shadowLight.position.set(12, 22, 22)
+    mql ? shadowLight.position.set(1, 20, -9) : shadowLight.position.set(12, 23.3, 22)
 })
 
 
@@ -548,8 +543,8 @@ function animate() {
 
 
     // kebab rotation animation
-    kbbRotate ? kbbRotationGroup.rotation.z -= 0.001 : null
-    kbbRotate ? kbbRocketShadow.rotation.z -= 0.001 : null
+    kbbFloats ? kbbRotationGroup.rotation.z -= 0.001 : null
+    kbbFloats ? kbbRocketShadow.rotation.z -= 0.001 : null
 
 
     // camera target movement
@@ -573,6 +568,7 @@ function animate() {
     compositRenderTarget2.dispose()
     compositRenderTarget1.dispose()
 }
+
 
 const ls = document.getElementById('loadingScreen')
 
