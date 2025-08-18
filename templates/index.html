@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <!--    TODO: add that little picture at the browser tab-->
+        <title>Peter Varnai</title>
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover, orientation=portrait">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/f/css/style.css">
+        <link rel="stylesheet" href="/f/css/mobile.css">
+        <script type="module" crossorigin src="/f/js/index-BNxXh4at.js"></script>
+    </head>
+    <body>
+
+        <h1 id="peter-title-mobile" style="color: black">Peter <br>Várnai</h1>
+        <div id="" class="container">
+            <div class="loading-screen-container">
+                <p id="loadingScreen"></p>
+            </div>
+        </div>
+        <div style="z-index: 2;" class="container">
+            <div id="menu-points">
+                <ul>
+                    <li>
+                        <h1 id="peter-title-dt">Peter Várnai</h1><br>
+                        <button id="top-works-menupoint" class="menu-points">works</button>
+                        <div class="works-submenu-container">
+                            <ul class="works-list">
+                                {% for project in projects_list %}
+                                <li>
+                                    <button onclick="worksSubmenuOnClick({{project.id}})" class="works-submenu">{{ project.title }}
+                                    </button>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="menu-containers">
+                        <button id="bottom-works-menupoint" class="menu-points" onclick="toggleAboutWindow()">about</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="works-window" style="display: none">
+                <button id="close-works-btn" onclick="toggleWorksWindow()">close</button>
+                <div id="project-view"></div>
+            </div>
+
+            <div id="about-window" style="display: none">
+                <button id="close-about-btn" onclick="toggleAboutWindow()">close</button>
+                <table class="exhibitions-list">
+                    <tbody>
+                        {% for row in exhibitions_table %}
+                        {% if row.big_row %}
+                        <tr>
+                            <th colspan="2">{{row.title}}</th>
+                        </tr>
+                            {% else %}
+                        <tr>
+                            <td>
+                                {% if row.link != "" %}
+                                <a href="{{row.link}}" target="_blank">{{row.title}}</a>
+                                {% else %}
+                                {{ row.title }}
+                                {% endif %}
+                            </td>
+                            <td class="location-cell">
+                                {{ row.location }}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div id="3d-scene" class="container"></div>
+
+        <script>
+
+            const smileyArr = [
+                [':)))))))', '::))))))', ':::)))))', '::::))))', ':::::)))', '::::::))', ':::::::)', '::::::))', ':::::)))', '::::))))', ':::)))))', '::))))))', ':)))))))'],
+                [';)))))))', ';;))))))', ';;;)))))', ';;;;))))', ';;;;;)))', ';;;;;;))', ';;;;;;;)', ';;;;;;))', ';;;;;)))', ';;;;))))', ';;;)))))', ';;))))))', ';)))))))']
+            ]
+
+            const ls = document.getElementById('loadingScreen')
+            let loadRound = 0
+            let loadType = false
+
+            function loadingAnim() {
+                if (loadType) {
+                    ls.innerText = smileyArr[0][loadRound]
+                    loadRound++
+                    if (loadRound > 12) {
+                        loadType = !loadType
+                        loadRound = 0
+                    }
+                } else {
+                    ls.innerText = smileyArr[1][loadRound]
+                    loadRound++
+                    if (loadRound > 12) {
+                        loadType = !loadType
+                        loadRound = 0
+                    }
+                }
+                setTimeout(() => {
+                    loadingAnim()
+                }, 90)
+            }
+
+            loadingAnim()
+
+        </script>
+        <script src="/f/js/menu_functions.js"></script>
+        <!-- <script type="module" src="/f/js/3dScene.js"></script> -->
+    </body>
+</html>

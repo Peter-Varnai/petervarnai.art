@@ -1,0 +1,22 @@
+<table class="exhibitions-list">
+    <tbody>
+        {% for row in exhibitions_table %}
+        {% if row.big_row %}
+            <tr>
+                <th colspan="2">{{row.title}}</th>
+            </tr>
+        {% else %}
+            <tr>
+            {% if row.link != "" %}
+                <a href="{{row.link}}" target="_blank">{{row.title}}</a>
+            {% else %}
+                {{ row.title }}
+            {% endif %}
+            </tr>
+            <tr class="location-cell">
+                {{ row.location }}
+            </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,32 @@
+<div class="project-panel-info">
+    <div class="images-panel" id="images-panel">
+        {% for pic in project.pictures %}
+        {% if loop.first %}
+            <img class="primary-image" src="/f/static/images/{{project.id}}/{{pic}}">
+        {% else %}
+            <img class="thumbnail-image" onclick="changePrimaryImage(this)" src="/f/static/images/{{project.id}}/{{pic}}">
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div id="description-panel">
+        <table id="details-table">
+            <tr class="title-row">
+                <td>
+                <td class="details-title">{{project.title}}</td>
+            </tr>
+             <tr class="details-row">
+                <td class="details-type">medium:</td>
+                <td class="details-content">{{project.medium}}</td>
+            </tr>
+            <tr class="details-row">
+                <td class="details-type">duration:</td>
+                <td class="details-content">{{project.duration}}</td>
+            </tr>
+            <tr class="details-row">
+                <td class="details-type">released:</td>
+                <td class="details-content">{{project.release}}</td>
+            </tr>
+        </table>
+        <div id="concept-panel">{{project.concept}}</div>
+    </div>
+</div>

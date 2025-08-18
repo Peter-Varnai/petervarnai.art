@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Exhibition</title>
+</head>
+<body>
+
+    <h1>Edit New Project</h1>
+    <form action="/project" method="put" enctype="multipart/form-data">
+        <label>Title:</label>
+        <input type="text" name="title" value="{{ edit_project.title }}" required><br><br>
+
+        <label>Date:</label>
+        <input type="date" name="date" value="{{ edit_project.date }}" required><br><br>
+
+        <label>Video link:</label>
+        <input type="url" name="video_link" value="{{ edit_project.video_link }}"><br><br>
+
+        <label>Medium:</label>
+        <input type="text" name="medium" value="{{ edit_project.medium }}"><br><br>
+
+        <label>Duration:</label>
+        <input type="text" name="video_link" value="{{ edit_project.duration }}"><br><br>
+
+        <label>Concept:</label>
+        <textarea name="concept" rows="5" cols="40" value="{{ edit_project.concept }}"></textarea><br><br>
+
+        {% for pic in pictures %}
+        <img src="{{ pic }}" class="thumbnail">
+        {% endfor %}
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h1>Add New Project</h1>
+    <form action="/project" method="post" enctype="multipart/form-data">
+        <label>Title:</label>
+        <input type="text" name="title" required><br><br>
+
+        <label>Date:</label>
+        <input type="date" name="date" required><br><br>
+
+        <label>Video link:</label>
+        <input type="url" name="video_link"><br><br>
+
+        <label>Medium:</label>
+        <input type="text" name="medium"><br><br>
+
+        <label>Duration:</label>
+        <input type="text" name="video_link"><br><br>
+
+        <label>Concept:</label>
+        <textarea name="concept" rows="5" cols="40"></textarea><br><br>
+
+        <label>Upload pictures:</label>
+        <input type="file" name="files" multiple accept="image/*"><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <h1>Add New Exhibition</h1>
+    <form id="exhibitionForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        
+        <label for="from">From (YYYY-MM-DD):</label>
+        <input type="date" id="from" name="from" required><br>
+        
+        <label for="till">Till (YYYY-MM-DD):</label>
+        <input type="date" id="till" name="till" required><br>
+        
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required><br>
+        
+        <label for="link">Link:</label>
+        <input type="url" id="link" name="link"><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('exhibitionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: e.target.name.value,
+                from: e.target.from.value,
+                till: e.target.till.value,
+                location: e.target.location.value,
+                link: e.target.link.value
+            };
+
+            try {
+                const response = await fetch('/exhibitions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                alert(result);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

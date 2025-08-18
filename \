@@ -1,0 +1,114 @@
+use actix_web::{get, post, web, HttpRequest, HttpResponse, Responder};
+use actix_identity::Identity;
+use tera::{Context, Tera};
+use rusqlite::{params, Connection};
+use crate::{
+    error_handling::AppError,
+    models::{Exhibition, ProjectList, ProjectNo, Project, 
+        AppState, LoginForm},
+};
+
+pub fn public_service_config(cfg: &mut web::ServiceConfig) {
+    cfg.service(index)
+        .service(project);
+}
+
+#[get("/")]
+pub async fn index(tera: web::Data<Tera>) -> Result<HttpResponse, AppError> {
+    let conn = Connection::open("peter_website.db")?;
+    let mut stmt = conn.prepare("SELECT id, title FROM projects")?;
+    let projects = stmt.query_map([], |row| {
+        Ok(ProjectList {
+            id: row.get(0)?,
+            title: row.get(1)?,
+        })
+    })?.collect::<Result<Vec<_>, rusqlite::Error>>()?;
+
+    let mut exhib_stmt = conn.prepare("SELECT id, title, location, link, big_row, date FROM about")?;
+
+    let exhibitions = exhib_stmt.query_map([],
+        |row| {
+            Ok(Exhibition{
+                id: row.get(0)?,
+                title: row.get(1)?,
+                location: row.get(2)?,
+                link: row.get(3)?,
+                big_row: row.get(4)?,
+                date: row.get(5)?,
+            })
+        })?.collect::<Result<Vec<_>, rusqlite::Error>>()?;
+
+    // projects.collect();
+    let mut context = Context::new();
+    context.insert("projects_list", &projects);
+    context.insert("exhibitions_table", &exhibitions);
+   
+    let rendered = tera.render("index.html", &context).expect("error rendering index template");
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
+}
+
+
+#[get("/prj")]
+pub async fn project(
+    tera: web::Data<Tera>, 
+    project: web::Query<ProjectNo>
+) -> Result<HttpResponse, AppError>  
+{
+    let project_id: u16 = project.no;
+    println!("project id: {}", project_id);
+    let conn = Connection::open("peter_website.db")?;
+    let mut proj_list_stmt = conn.prepare("SELECT title, pictures, video, concept, 
+        collaborators, medium, duration, release, id FROM projects WHERE id = ?1")?;
+    let project = proj_list_stmt.query_row(
+        params![project_id],
+        |row| {
+            let pictures_json: String = row.get(1)?;
+            let pictures: Vec<String> = serde_json::from_str(&pictures_json)
+                .expect("Failed to parse pictures JSON");
+
+            Ok(Project {
+                title: row.get(0)?,
+                pictures,
+                video: row.get(2)?,
+                concept: row.get(3)?,
+                collaborators: row.get(4)?,
+                medium: row.get(5)?,
+                duration: row.get(6)?,
+                release: row.get(7)?,
+                id: row.get(8)?,
+            })
+        }
+    )?;
+
+    let mut context = Context::new();
+    context.insert("project", &project);
+
+    let rendered = tera.render("project.html", &context).expect("error rendering index template");
+
+    Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
+}
+
+
+
+#[post("/login")]
+async fn login(state: web::Data<AppState>, form: web::Form<LoginForm>, request: HttpRequest)
+  -> impl Responder
+{
+    println!("state.pw");
+    if form.password == state.pw {
+        Identity::login(&request.extensions(), "admin".into()).expect("Failed to log in");
+        HttpResponse::Found().append_header(("Location", "/admin")).finish()
+    } else {
+        HttpResponse::Unauthorized().body("Invalid credentials")
+    }
+}
+
+
+#[post("/logout")]
+async fn logout(user: Identity) -> impl Responder  {
+    user.logout();
+    println!("Log out called");
+    HttpResponse::Ok().body("Logged out!")
+}
+

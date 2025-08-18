@@ -1,0 +1,5 @@
+/target
+/templates/old_html/
+/templates/node_modules/
+/templates/dist/
+/.vite
