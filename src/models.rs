@@ -1,13 +1,11 @@
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-
-use serde::{Serialize, Deserialize,};
 use tera::Tera;
-use time::Date;
 
-// TERA TEMPLATING 
+// TERA TEMPLATING
 #[derive(Deserialize)]
 pub struct ProjectNo {
-    pub no: u16
+    pub no: u16,
 }
 
 #[derive(Serialize, Debug)]
@@ -16,54 +14,78 @@ pub struct ProjectList {
     pub title: String,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Exhibition {
-    pub id: u16,
+    pub id: Option<u16>,
     pub title: String,
     pub location: Option<String>,
     pub link: Option<String>,
     pub big_row: bool,
-    pub date: Option<String>,
+    pub start_date: String,
+    pub till: String,
+}
+
+#[derive(Serialize)]
+pub struct DeleteExhibition {
+    pub id: u16,
+    pub name: String,
+    pub start_date: String,
 }
 
 #[derive(Serialize, Debug)]
 pub struct Project {
     pub id: u16,
     pub title: String,
-    pub pictures: Vec<String>,  // Assuming pictures stores multiple paths
-    pub video_link: Option<String>,  // Nullable field
-    pub concept: String,
-    pub collaborators: String,  // Assuming comma-separated values
-    pub medium: String,
-    pub duration: String,
     pub date: String,
+    pub video_link: Option<String>,
+    pub dir: String,
+    pub concept: String,
+    pub medium: Option<String>,
+    pub duration: Option<String>,
+    pub saved_files: Vec<String>,
+    // pub saved_files: SavedFiles,
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct DeleteProject {
+    pub id: u16,
+    pub name: Option<String>,
+    pub folder_path: String,
+}
 
 //FORMS
-#[derive(Deserialize)]
-pub struct ExhibitionForm {
-    pub name: String,
-    pub start_date: Date,
-    pub till: Date,
-    pub location: String,
-    pub link: String,
-}
-
+// #[derive(Deserialize)]
+// pub struct ExhibitionForm {
+//     pub name: String,
+//     pub start_date: String,
+//     pub till: String,
+//     pub location: String,
+//     pub link: Option<String>,
+// }
 
 #[derive(Deserialize)]
 pub struct LoginForm {
     pub password: String,
 }
 
-
+// pub struct ProjectForm {
+//     pub id: u16,
+//     pub title: String,
+//     pub date: String,
+//     pub video_link: Option<String>,
+//     pub concept: String,
+//     pub medium: Option<String>,
+//     pub duration: Option<String>,
+//     pub saved_files: Option<String>,
+//     pub dir: String,
+// }
 
 //TODO: Transform this into a struct instead of a tuple struct
 //for cleaner code when using its 0 field!
 #[derive(Deserialize)]
-pub struct Id(pub u16);
-
-
+pub struct Id {
+    pub id: u16,
+}
 
 #[derive(Clone)]
 pub struct AppState {
@@ -73,7 +95,6 @@ pub struct AppState {
     pub root_dir: PathBuf,
 }
 
-
 // SERVER WARMUP
 #[derive(Debug)]
 pub enum ConfigValue {
@@ -81,7 +102,6 @@ pub enum ConfigValue {
     NumberValue(u16),
     PathValue(PathBuf),
 }
-
 
 impl ConfigValue {
     pub fn to_string(&self) -> String {

@@ -1,110 +1,151 @@
-<!DOCTYPE html>
-<html>
 <head>
-    <title>Add Exhibition</title>
+    <title>Admin</title>
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <link rel="stylesheet" href="/f/css/admin.css">
 </head>
+
 <body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" id="addTab" type="button">Add New Project</button>
+            <button class="tab" id="editTab" type="button">Edit Project</button>
+        </div>
 
-    <h1>Edit New Project</h1>
-    <form action="/project" method="put" enctype="multipart/form-data">
-        <label>Title:</label>
-        <input type="text" name="title" value="{{ edit_project.title }}" required><br><br>
+        <div id="addProjectSection">
+            <div id="addProjectForm" class="section-title">Add New Project</div>
+            <form enctype="multipart/form-data">
+                <label>Title:</label>
+                <input type="text" name="title" required>
 
-        <label>Date:</label>
-        <input type="date" name="date" value="{{ edit_project.date }}" required><br><br>
+                <label>Date:</label>
+                <input type="month" name="date" required>
 
-        <label>Video link:</label>
-        <input type="url" name="video_link" value="{{ edit_project.video_link }}"><br><br>
+                <label>Video link:</label>
+                <input type="text" name="video_link">
 
-        <label>Medium:</label>
-        <input type="text" name="medium" value="{{ edit_project.medium }}"><br><br>
+                <label>Medium:</label>
+                <input type="text" name="medium">
 
-        <label>Duration:</label>
-        <input type="text" name="video_link" value="{{ edit_project.duration }}"><br><br>
+                <label>Duration:</label>
+                <input type="text" name="duration">
 
-        <label>Concept:</label>
-        <textarea name="concept" rows="5" cols="40" value="{{ edit_project.concept }}"></textarea><br><br>
+                <label>Concept:</label>
+                <textarea id="add_concept" name="concept" rows="5" cols="40" required></textarea>
 
-        {% for pic in pictures %}
-        <img src="{{ pic }}" class="thumbnail">
+                <label>Upload pictures:</label>
+                <input type="file" name="files" multiple accept="image/*">
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="editProjectSection" class="hidden">
+            <div class="section-title">Edit Project</div>
+            <form id="editProjectForm" enctype="multipart/form-data">
+                <label>Title:</label>
+                <input type="text" name="title" value="{{ edit_project.title }}" required>
+
+                <label>Date:</label>
+                <input type="month" name="date" value="{{ edit_project.date }}" required>
+
+                <label>Video link:</label>
+                <input type="text" name="video_link" value="{{ edit_project.video_link }}">
+
+                <label>Medium:</label>
+                <input type="text" name="medium" value="{{ edit_project.medium }}">
+
+                <label>Duration:</label>
+                <input type="text" name="duration" value="{{ edit_project.duration }}">
+
+                <label>Concept:</label>
+                <textarea name="concept" rows="5" cols="40">{{ edit_project.concept }}</textarea>
+
+                {% for pic in edit_project.saved_files %}
+                <!-- <img src="/f/static/images/{{ edit_project.dir }}/{{ pic }}" class="thumbnail"> -->
+                {% endfor %}
+
+                <input type="hidden" name="dir" value="{{ edit_project.dir }}">
+                <input type="hidden" name="id" value="{{ edit_project.id }}">
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div style="margin-top:40px;">
+            <div class="section-title">Add New Exhibition/Event</div>
+            <form id="exhibitionForm">
+                <label for="big_row">Event:</label>
+                <input type="checkbox" id="big_row" name="big_row">
+
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="from">From (YYYY-MM-DD):</label>
+                <input type="date" id="from" name="start_date" required>
+
+                <label for="till" id="tillLabel">Till (YYYY-MM-DD):</label>
+                <input type="date" id="till" name="till" required>
+
+                <label for="location" id="locationLabel">Location:</label>
+                <input type="text" id="location" name="location" required>
+
+                <label for="link">Link:</label>
+                <input type="url" id="link" name="link">
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="years-container">
+            {% for year in delete_exhibition_years %}
+            <div class="year-section">
+                <div class="year-header">
+                    {{ year }}
+                </div>
+                <div class="exhibitions-row">
+                    {% for de in delete_exhibitions[year] %}
+                    <div>
+                        <button class="delete-exhib-btn" data-id="{{ de.id }}">{{ de.name }}</button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% for proj in delete_projects %}
+        <button class="delete-project-btn" data-id="{{ proj.id }}" data-folder="{{ proj.folder_path }}">{{ proj.name
+            }}</button>
         {% endfor %}
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <h1>Add New Project</h1>
-    <form action="/project" method="post" enctype="multipart/form-data">
-        <label>Title:</label>
-        <input type="text" name="title" required><br><br>
-
-        <label>Date:</label>
-        <input type="date" name="date" required><br><br>
-
-        <label>Video link:</label>
-        <input type="url" name="video_link"><br><br>
-
-        <label>Medium:</label>
-        <input type="text" name="medium"><br><br>
-
-        <label>Duration:</label>
-        <input type="text" name="video_link"><br><br>
-
-        <label>Concept:</label>
-        <textarea name="concept" rows="5" cols="40"></textarea><br><br>
-
-        <label>Upload pictures:</label>
-        <input type="file" name="files" multiple accept="image/*"><br><br>
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <h1>Add New Exhibition</h1>
-    <form id="exhibitionForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required><br>
-        
-        <label for="from">From (YYYY-MM-DD):</label>
-        <input type="date" id="from" name="from" required><br>
-        
-        <label for="till">Till (YYYY-MM-DD):</label>
-        <input type="date" id="till" name="till" required><br>
-        
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required><br>
-        
-        <label for="link">Link:</label>
-        <input type="url" id="link" name="link"><br>
-        
-        <button type="submit">Submit</button>
-    </form>
+    </div>
 
     <script>
-        document.getElementById('exhibitionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = {
-                name: e.target.name.value,
-                from: e.target.from.value,
-                till: e.target.till.value,
-                location: e.target.location.value,
-                link: e.target.link.value
-            };
+        document.getElementById('big_row').addEventListener('change', function () {
+            let tillInput = document.getElementById('till');
+            let tillLabel = document.getElementById('tillLabel');
 
-            try {
-                const response = await fetch('/exhibitions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                const result = await response.json();
-                alert(result);
-            } catch (error) {
-                console.error('Error:', error);
+            if (this.checked) {
+                tillInput.style.display = 'none';
+                tillLabel.style.display = 'none';
+                tillInput.value = document.getElementById('from').value;
+            } else {
+                tillInput.style.display = '';
+                tillLabel.style.display = '';
+            }
+        });
+
+        document.getElementById('from').addEventListener('input', function () {
+            let bigRow = document.getElementById('big_row');
+            if (bigRow.checked) {
+                document.getElementById('till').value = this.value;
             }
         });
     </script>
+
+    <script src="/f/js/admin.js"></script>
+    <script src="/f/js/submit_forms.js"></script>
+    <script>
+        CKEDITOR.replace('add_concept');
+    </script>
+
 </body>
-</html>

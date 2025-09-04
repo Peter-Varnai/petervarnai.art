@@ -1,18 +1,16 @@
 use std::{
-    collections::HashMap, 
-    env::{self, VarError}, 
-    fs::File, 
+    collections::HashMap,
+    env::{self, VarError},
+    fs::File,
     io::{BufRead, BufReader},
     path::PathBuf,
 };
-use actix_web::{Responder, HttpResponse};
 
 use crate::models::ConfigValue;
 
-
 pub fn load_local_env_file() {
     if env::current_exe().unwrap().ends_with("release") {
-        return
+        return;
     }
 
     let file = File::open(".env").expect(".env file not found");
@@ -30,19 +28,23 @@ pub fn load_local_env_file() {
 }
 
 pub fn server_config() -> Result<HashMap<String, ConfigValue>, VarError> {
-
     load_local_env_file();
 
     let mut config = HashMap::new();
 
     let host = ConfigValue::StringValue(env::var("HOST")?);
-    let port = ConfigValue::NumberValue(env::var("PORT")?.parse().expect("failed to parse PORT value"));
+    let port = ConfigValue::NumberValue(
+        env::var("PORT")?
+            .parse()
+            .expect("failed to parse PORT value"),
+    );
+
     println!("app running at {:?}:{:?}", host, port);
+
     config.insert("host".to_string(), host);
     config.insert("port".to_string(), port);
 
     let root_dir = PathBuf::from(env::var("ROOT_DIR")?);
-    println!("root dir: {:?}", root_dir);
 
     let db_path = env::var("DB")?;
     let db_url = ConfigValue::PathValue(root_dir.clone().join(db_path));
@@ -52,7 +54,7 @@ pub fn server_config() -> Result<HashMap<String, ConfigValue>, VarError> {
 
     let password = ConfigValue::StringValue(env::var("PWD")?);
     config.insert("pwd".to_string(), password);
-    
+
     config.insert("root_dir".to_string(), ConfigValue::PathValue(root_dir));
 
     Ok(config)

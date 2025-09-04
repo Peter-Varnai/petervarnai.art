@@ -1,21 +1,26 @@
-<table class="exhibitions-list">
+<table class="exhibitions-list" style="margin: 0 auto; width: 100%; max-width: 700px;">
     <tbody>
         {% for row in exhibitions_table %}
         {% if row.big_row %}
-            <tr>
-                <th colspan="2">{{row.title}}</th>
-            </tr>
+        <tr>
+            <th colspan="2" scope="col">{{row.title}}</th>
+        </tr>
         {% else %}
-            <tr>
-            {% if row.link != "" %}
-                <a href="{{row.link}}" target="_blank">{{row.title}}</a>
-            {% else %}
-                {{ row.title }}
-            {% endif %}
-            </tr>
-            <tr class="location-cell">
-                {{ row.location }}
-            </tr>
+        <tr>
+            <td>
+                {% if row.link != "" %}
+                <a href="{{row.link}}" target="_blank" rel="noopener noreferrer"
+                    aria-label="{{row.title}} (opens in a new tab)">{{row.title}}</a>
+                {% else %}
+                <span>{{ row.title }}</span>
+                {% endif %}
+            </td>
+        </tr>
+        <tr class="location-cell">
+            <td>
+                <span aria-label="Location: {{ row.location }}">{{ row.location }}</span>
+            </td>
+        </tr>
         {% endif %}
         {% endfor %}
     </tbody>
