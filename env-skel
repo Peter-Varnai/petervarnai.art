@@ -1,0 +1,5 @@
+HOST=127.0.0.1
+PORT=8080
+PWD=pwd
+ROOT_DIR=/home/peter/projects/sajat_weblap_backend/
+DB=peter_website.db

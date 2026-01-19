@@ -2,5 +2,7 @@
 /templates/old_html/
 /templates/node_modules/
 /templates/dist/
+/templates/static/
+/peter_website.db
 /.vite
 /.env
