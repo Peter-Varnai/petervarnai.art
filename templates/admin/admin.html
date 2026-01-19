@@ -41,7 +41,7 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
-        <div id="editProjectSection">
+        <div id="editProjectSection" class="hidden">
             <div class="section-title">Edit Project</div>
             <ul id="editProjectList">
                 {% for project in edit_project_list %}
@@ -81,14 +81,14 @@
             </form>
         </div>
 
-        <div id='deleteProjectSection'>
+        <div id='deleteProjectSection' class="hidden">
             {% for proj in delete_projects %}
             <button class="delete-project-btn" data-id="{{ proj.id }}" data-folder="{{ proj.folder_path }}">
                 {{ proj.name }}</button>
             {% endfor %}
         </div>
 
-        <div id="addExhibitionSection" style="margin-top:40px;">
+        <div id="addExhibitionSection" class="hidden">
             <div class="section-title">Add New Exhibition/Event</div>
             <form id="exhibitionForm">
                 <label for="big_row">Event:</label>
@@ -113,7 +113,7 @@
             </form>
         </div>
 
-        <div id='deleteExhibitionSection'>
+        <div id='deleteExhibitionSection' class="hidden">
             <div class="years-container">
                 {% for year in delete_exhibition_years %}
                 <div class="year-section">

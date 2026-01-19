@@ -93,7 +93,7 @@ document.querySelectorAll('.delete-project-btn').forEach(btn => {
     btn.addEventListener('click', function() {
         let json = JSON.stringify({
             'id': Number(btn.dataset.id),
-            'folder_path': btn.dataset, folder,
+            'folder_path': btn.dataset.folder,
         })
         console.log('sending request to delete project: ', json)
         fetch('/project', {
@@ -102,22 +102,32 @@ document.querySelectorAll('.delete-project-btn').forEach(btn => {
             body: json
         }).then(r => {
             console.log('answer :', r)
-            if (r.redirected) window.location = r.url;
+            if (r.ok) window.location = r.url;
             else console.log('error deleting project', json);
         });
-        // deleteProjecct(btn.dataset.id, btn.dataset.folder)
     })
 })
 
+// SELECT WHICH PROJECT TO EDIT
 document.querySelectorAll('.editProjectBtn').forEach(btn => {
     btn.addEventListener('click', function() {
         console.log('edit project button pressed', btn.dataset.id)
-        fetch(`/project?no=${btn.dataset.id}`).then(r => {
-            if (r.ok) {
+        fetch(`/project?no=${btn.dataset.id}`)
+            .then(r => r.json())
+            .then(project => {
+                const form = document.getElementById('editProjectForm');
+                form.querySelector('input[name="title"]').value = project.title;
+                form.querySelector('input[name="date"]').value = project.date.substring(0, 7); // YYYY-MM
+                form.querySelector('input[name="video_link"]').value = project.video_link || '';
+                form.querySelector('input[name="medium"]').value = project.medium || '';
+                form.querySelector('input[name="duration"]').value = project.duration || '';
+                form.querySelector('textarea[name="concept"]').value = project.concept;
+                form.querySelector('input[name="dir"]').value = project.dir;
+                form.querySelector('input[name="id"]').value = project.id;
 
-                console.log('Edit project request coming', r.body)
-            } else console.log('somehting went wrong')
-        })
+                console.log('Form populated with:', project);
+            })
+            .catch(err => console.log('Error:', err));
     })
 })
 
