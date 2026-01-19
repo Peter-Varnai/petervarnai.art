@@ -1,17 +1,16 @@
 mod error;
-mod models;
 mod handlers;
 mod helpers;
+mod models;
 
-use actix_web::{web::Data, App, HttpServer, cookie::Key};
+use actix_files::Files;
 use actix_identity::IdentityMiddleware;
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};
-use handlers::{admin_service_config, public_service_config};
+use actix_web::{cookie::Key, web::Data, App, HttpServer};
+use handlers::{admin_service_config, project_service_config, public_service_config};
 use helpers::server_config;
 use models::AppState;
 use tera::Tera;
-use actix_files::Files;
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -49,19 +48,18 @@ async fn main() -> std::io::Result<()> {
         root_dir,
     };
 
-    HttpServer::new(move|| {
+    HttpServer::new(move || {
         App::new()
             .wrap(IdentityMiddleware::default())
             .wrap(SessionMiddleware::new(
-                    CookieSessionStore::default(), 
-                    secret_key.clone()))
-            .service(Files::new(
-                    "/f", 
-                    "./templates"
-                    ).show_files_listing())
+                CookieSessionStore::default(),
+                secret_key.clone(),
+            ))
+            .service(Files::new("/f", "./templates").show_files_listing())
             .app_data(Data::new(state.clone()))
             .configure(public_service_config)
             .configure(admin_service_config)
+            .configure(project_service_config)
     })
     .bind((host, port))?
     .run()

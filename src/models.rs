@@ -25,7 +25,13 @@ pub struct Exhibition {
     pub till: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
+pub struct EditProjectListItem {
+    pub project_title: String,
+    pub project_id: u16,
+}
+
+#[derive(Serialize, Debug, Clone)]
 pub struct DeleteExhibition {
     pub id: u16,
     pub name: String,
@@ -43,15 +49,32 @@ pub struct Project {
     pub medium: Option<String>,
     pub duration: Option<String>,
     pub saved_files: Vec<String>,
-    // pub saved_files: SavedFiles,
 }
 
-#[derive(Deserialize, Serialize)]
+impl Default for Project {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            title: String::new(),
+            date: String::new(),
+            video_link: None,
+            dir: String::new(),
+            concept: String::new(),
+            medium: None,
+            duration: None,
+            saved_files: Vec::new(),
+        }
+    }
+}
+
+#[derive(Deserialize, Serialize, Debug)]
 pub struct DeleteProject {
     pub id: u16,
     pub name: Option<String>,
     pub folder_path: String,
 }
+
+//
 
 //FORMS
 // #[derive(Deserialize)]
@@ -66,6 +89,11 @@ pub struct DeleteProject {
 #[derive(Deserialize)]
 pub struct LoginForm {
     pub password: String,
+}
+
+#[derive(Deserialize)]
+pub struct AdminQuery {
+    pub edit_project: Option<String>,
 }
 
 // pub struct ProjectForm {
@@ -85,6 +113,13 @@ pub struct LoginForm {
 #[derive(Deserialize)]
 pub struct Id {
     pub id: u16,
+}
+
+#[derive(Clone)]
+pub struct TestAppState {
+    pub pwd: String,
+    pub db: PathBuf,
+    pub root_dir: PathBuf,
 }
 
 #[derive(Clone)]

@@ -143,3 +143,49 @@ button[type="submit"]:hover {
     display: flex;
     flex-wrap: wrap;
 }
+
+
+/* DELETE PROJECT BUTTONS */
+.delete-project-btn {
+    margin: 10px;
+    background-color: #fff0f5;
+    color: #ff4081;
+    border: 3px dashed #ff4040;
+    border-radius: 20px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(255, 64, 129, 0.2);
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+.delete-project-btn:hover {
+    background-color: #ffe6ee;
+    border-style: solid;
+    border-color: #ff0066;
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 6px 12px rgba(255, 0, 102, 0.3);
+}
+
+.delete-project-btn:active {
+    transform: scale(0.95) rotate(2deg);
+    background-color: #ffccd9;
+}
+
+.delete-project-btn::after {
+    content: "☠️";
+    position: absolute;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.delete-project-btn:hover::after {
+    opacity: 1;
+}

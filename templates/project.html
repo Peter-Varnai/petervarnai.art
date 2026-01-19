@@ -2,9 +2,9 @@
     <div class="images-panel" id="images-panel">
         {% for pic in project.saved_files %}
         {% if loop.first %}
-        <img class="primary-image" src="/f/static/images/{{project.id}}/{{pic}}">
+        <img class="primary-image" src="/f/static/images/{{project.dir}}/{{pic}}">
         {% else %}
-        <img class="thumbnail-image" onclick="changePrimaryImage(this)" src="/f/static/images/{{project.id}}/{{pic}}">
+        <img class="thumbnail-image" onclick="changePrimaryImage(this)" src="/f/static/images/{{project.dir}}/{{pic}}">
         {% endif %}
         {% endfor %}
     </div>
@@ -30,17 +30,3 @@
         <div id="concept-panel">{{project.concept}}</div>
     </div>
 </div>
-
-<!-- pub struct Project { -->
-<!--     pub id: u16, -->
-<!--     pub title: String, -->
-<!--     pub date: String, -->
-<!--     pub video_link: Option<String>, -->
-<!--     pub dir: String, -->
-<!--     pub concept: String, -->
-<!--     pub medium: Option<String>, -->
-<!--     pub duration: Option<String>, -->
-<!--     pub saved_files: Vec<String>, -->
-<!--     // pub saved_files: SavedFiles, -->
-<!-- } -->
-<!---->

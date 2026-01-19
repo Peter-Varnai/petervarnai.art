@@ -1,8 +1,9 @@
 use crate::{
-    error::{ApiError, AppError},
+    error::AppError,
+    helpers::return_project,
     models::{
-        AppState, DeleteExhibition, DeleteProject, Exhibition, LoginForm, Project, ProjectList,
-        ProjectNo,
+        AppState, DeleteExhibition, DeleteProject, EditProjectListItem, Exhibition, LoginForm,
+        Project, ProjectList, ProjectNo,
     },
 };
 use actix_identity::Identity;
@@ -11,8 +12,7 @@ use actix_web::{
     web::{self, Data, Query},
     HttpMessage, HttpRequest, HttpResponse, Responder,
 };
-use rusqlite::{params, Connection};
-use serde_json;
+use rusqlite::Connection;
 use std::collections::HashMap;
 use tera::Context;
 
@@ -88,31 +88,32 @@ async fn project(
 ) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
     let project_id: u16 = project.no;
-    println!("project id: {}", project_id);
+    println!("getting project with id: {}", project_id);
 
     let db_path = &state.db;
     let conn = Connection::open(db_path)?;
-    let mut proj_list_stmt = conn.prepare(
-        "SELECT title, pictures, video, concept, 
-        dir, medium, duration, release, id FROM projects WHERE id = ?1",
-    )?;
-    let project = proj_list_stmt.query_row(params![project_id], |row| {
-        let pictures_json: String = row.get(1)?;
-        let saved_files: Vec<String> =
-            serde_json::from_str(&pictures_json).expect("Failed to parse pictures JSON");
-
-        Ok(Project {
-            title: row.get(0)?,
-            saved_files,
-            video_link: row.get(2)?,
-            concept: row.get(3)?,
-            dir: row.get(4)?,
-            medium: row.get(5)?,
-            duration: row.get(6)?,
-            date: row.get(7)?,
-            id: row.get(8)?,
-        })
-    })?;
+    let project = return_project(conn, &project_id).await?;
+    // let mut proj_list_stmt = conn.prepare(
+    //     "SELECT title, pictures, video, concept,
+    //     dir, medium, duration, release, id FROM projects WHERE id = ?1",
+    // )?;
+    // let project = proj_list_stmt.query_row(params![project_id], |row| {
+    //     let pictures_json: String = row.get(1)?;
+    //     let saved_files: Vec<String> =
+    //         serde_json::from_str(&pictures_json).expect("Failed to parse pictures JSON");
+    //
+    //     Ok(Project {
+    //         title: row.get(0)?,
+    //         saved_files,
+    //         video_link: row.get(2)?,
+    //         concept: row.get(3)?,
+    //         dir: row.get(4)?,
+    //         medium: row.get(5)?,
+    //         duration: row.get(6)?,
+    //         date: row.get(7)?,
+    //         id: row.get(8)?,
+    //     })
+    // })?;
 
     let mut context = Context::new();
     context.insert("project", &project);
@@ -128,7 +129,7 @@ async fn project(
 async fn admin(
     identity: Option<Identity>,
     state: Data<AppState>,
-) -> Result<HttpResponse, ApiError> {
+) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
 
     if false {
@@ -143,8 +144,34 @@ async fn admin(
         let db_path = &state.db;
         let conn = Connection::open(db_path)?;
 
-        let mut stmt_exhibitions = conn.prepare("SELECT id, name, start_date FROM exhibitions")?;
+        let mut stmt_edit_project_list = conn.prepare("SELECT id, title FROM projects")?;
+        let edit_project_list = stmt_edit_project_list
+            .query_map([], |row| {
+                Ok(EditProjectListItem {
+                    project_id: row.get(0)?,
+                    project_title: row.get(1)?,
+                })
+            })?
+            .collect::<Result<Vec<_>, _>>()?;
 
+        let mut stmt_edit_project =
+            conn.prepare("SELECT * FROM projects ORDER BY id DESC LIMIT 1")?;
+        let editProject: Project = stmt_edit_project.query_row([], |row| {
+            Ok(Project {
+                id: row.get("id")?,
+                title: row.get("title")?,
+                date: row.get("release")?,
+                video_link: row.get("video")?,
+                dir: row.get("dir")?,
+                concept: row.get("concept")?,
+                medium: row.get("medium")?,
+                duration: row.get("duration")?,
+                saved_files: serde_json::from_str(&row.get::<_, String>("pictures")?)
+                    .unwrap_or_default(),
+            })
+        })?;
+
+        let mut stmt_exhibitions = conn.prepare("SELECT id, name, start_date FROM exhibitions")?;
         let delete_exhibitions: Vec<DeleteExhibition> = stmt_exhibitions
             .query_map([], |row| {
                 Ok(DeleteExhibition {
@@ -157,44 +184,18 @@ async fn admin(
 
         let mut delete_exhibitions_by_year: HashMap<String, Vec<DeleteExhibition>> = HashMap::new();
 
-        for e in delete_exhibitions {
+        for e in &delete_exhibitions {
             let year = e.start_date.chars().take(4).collect::<String>();
 
-            delete_exhibitions_by_year.entry(year).or_default().push(e);
+            delete_exhibitions_by_year
+                .entry(year)
+                .or_default()
+                .push(e.clone());
         }
 
         let mut years: Vec<_> = delete_exhibitions_by_year.keys().cloned().collect();
         years.sort();
         years.reverse();
-
-        let edit_project = conn.query_row(
-            "SELECT * FROM projects 
-            ORDER BY id DESC
-            LIMIT 1",
-            [],
-            |row| {
-                let json_str: String = row.get(2)?;
-                let saved_files: Vec<String> = serde_json::from_str(&json_str).map_err(|e| {
-                    rusqlite::Error::FromSqlConversionFailure(
-                        1,
-                        rusqlite::types::Type::Text,
-                        Box::new(e),
-                    )
-                })?;
-
-                Ok(Project {
-                    id: row.get(0)?,
-                    title: row.get(1)?,
-                    saved_files,
-                    video_link: row.get(3)?,
-                    concept: row.get(4)?,
-                    medium: row.get(6)?,
-                    duration: row.get(7)?,
-                    date: row.get(8)?,
-                    dir: row.get(9)?,
-                })
-            },
-        )?;
 
         let delete_projects = conn
             .prepare("SELECT id, dir, title FROM projects")?
@@ -208,11 +209,12 @@ async fn admin(
             .collect::<Result<Vec<DeleteProject>, _>>()?;
 
         let mut context = Context::new();
-        context.insert("edit_project", &edit_project);
+        context.insert("edit_project", &editProject);
+        context.insert("edit_project_list", &edit_project_list);
         context.insert("delete_exhibitions", &delete_exhibitions_by_year);
         context.insert("delete_exhibition_years", &years);
         context.insert("delete_projects", &delete_projects);
-        let html = tera.render("admin.html", &context)?;
+        let html = tera.render("admin/admin.html", &context)?;
 
         Ok(HttpResponse::Ok().body(html))
     }

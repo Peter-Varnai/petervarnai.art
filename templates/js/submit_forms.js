@@ -2,7 +2,6 @@
 document.getElementById('exhibitionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-
     const formData = {
         title: e.target.name.value,
         start_date: e.target.start_date.value,
@@ -12,7 +11,6 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
         big_row: e.target.big_row.checked,
     };
 
-    console.log(formData)
     try {
         const response = await fetch('/exhibition', {
             method: 'POST',
@@ -29,22 +27,22 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
 
 document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-        deleteExhibition(btn.dataset.id);
+        console.log('del button clicked')
+        let json_id = JSON.stringify({ 'id': Number(btn.dataset.id) })
+        console.log('sending delete project request :', json_id)
+        fetch('/exhibition', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: json_id
+        }).then(r => {
+            if (r.redirected) window.location = r.url;
+            else location.reload();
+        });
+
     });
 });
 
-function deleteExhibition(id) {
-    let json_id = JSON.stringify({ 'id': Number(id) })
-    console.log(json_id)
-    fetch('/exhibition', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: json_id
-    }).then(r => {
-        if (r.redirected) window.location = r.url;
-        else location.reload();
-    });
-}
+
 
 
 // projects related forms
@@ -92,21 +90,51 @@ document.getElementById('editProjectForm').addEventListener('submit', function(e
 });
 
 document.querySelectorAll('.delete-project-btn').forEach(btn => {
-
+    btn.addEventListener('click', function() {
+        let json = JSON.stringify({
+            'id': Number(btn.dataset.id),
+            'folder_path': btn.dataset, folder,
+        })
+        console.log('sending request to delete project: ', json)
+        fetch('/project', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: json
+        }).then(r => {
+            console.log('answer :', r)
+            if (r.redirected) window.location = r.url;
+            else console.log('error deleting project', json);
+        });
+        // deleteProjecct(btn.dataset.id, btn.dataset.folder)
+    })
 })
 
-function deleteProjecct(id, path) {
-    let json = JSON.stringify({
-        'id': Number(id),
-        'path': path,
+document.querySelectorAll('.editProjectBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        console.log('edit project button pressed', btn.dataset.id)
+        fetch(`/project?no=${btn.dataset.id}`).then(r => {
+            if (r.ok) {
+
+                console.log('Edit project request coming', r.body)
+            } else console.log('somehting went wrong')
+        })
     })
-    console.log(json)
-    fetch('/exhibition', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: json
-    }).then(r => {
-        if (r.redirected) window.location = r.url;
-        else location.reload();
-    });
-}
+})
+
+
+// function deleteProjecct(id, path) {
+//     let json = JSON.stringify({
+//         'id': Number(id),
+//         'folder_path': path,
+//     })
+//     console.log('sending request to delete project: ', json)
+//     fetch('/project', {
+//         method: 'DELETE',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: json
+//     }).then(r => {
+//         console.log('answer :', r)
+//         if (r.redirected) window.location = r.url;
+//         else console.log('error deleting project', json);
+//     });
+// }
