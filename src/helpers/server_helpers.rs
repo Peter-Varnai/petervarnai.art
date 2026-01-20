@@ -9,7 +9,7 @@ use std::{
 use crate::models::ConfigValue;
 
 pub fn load_local_env_file() {
-    if env::current_exe().unwrap().ends_with("release") {
+    if cfg!(debug_assertions) {
         return;
     }
 
