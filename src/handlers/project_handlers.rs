@@ -50,8 +50,8 @@ async fn add_project(
 ) -> Result<HttpResponse, ApiError> {
     let tera = &state.tera;
 
-    // if identity.is_none() {
-    if false {
+    if identity.is_none() {
+        // if false {
         let context = Context::new();
         let login = tera.render("login.html", &context)?;
 
@@ -100,8 +100,8 @@ async fn update_project(
 ) -> Result<HttpResponse, ApiError> {
     let tera = &state.tera;
 
-    // if identity.is_none() {
-    if false {
+    if identity.is_none() {
+        // if false {
         let context = Context::new();
         let login = tera.render("login.html", &context)?;
 
@@ -158,8 +158,8 @@ async fn delete_project(
     let tera = &state.tera;
     println!("delete project called");
 
-    // if identity.is_none() {
-    if false {
+    if identity.is_none() {
+        // if false {
         let context = Context::new();
         let login = tera.render("login.html", &context)?;
 

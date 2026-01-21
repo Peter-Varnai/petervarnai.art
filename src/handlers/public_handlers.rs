@@ -132,8 +132,8 @@ async fn admin(
 ) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
 
-    if false {
-        // if identity.is_none() {
+    // if false {
+    if identity.is_none() {
         let context = Context::new();
         let login_template = tera.render("login.html", &context)?;
 
