@@ -9,7 +9,8 @@ use std::{
 use crate::models::ConfigValue;
 
 pub fn load_local_env_file() {
-    if cfg!(debug_assertions) {
+    println!("checking enviroment variables");
+    if !cfg!(debug_assertions) {
         return;
     }
 
