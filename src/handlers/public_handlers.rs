@@ -93,27 +93,6 @@ async fn project(
     let db_path = &state.db;
     let conn = Connection::open(db_path)?;
     let project = return_project(conn, &project_id).await?;
-    // let mut proj_list_stmt = conn.prepare(
-    //     "SELECT title, pictures, video, concept,
-    //     dir, medium, duration, release, id FROM projects WHERE id = ?1",
-    // )?;
-    // let project = proj_list_stmt.query_row(params![project_id], |row| {
-    //     let pictures_json: String = row.get(1)?;
-    //     let saved_files: Vec<String> =
-    //         serde_json::from_str(&pictures_json).expect("Failed to parse pictures JSON");
-    //
-    //     Ok(Project {
-    //         title: row.get(0)?,
-    //         saved_files,
-    //         video_link: row.get(2)?,
-    //         concept: row.get(3)?,
-    //         dir: row.get(4)?,
-    //         medium: row.get(5)?,
-    //         duration: row.get(6)?,
-    //         date: row.get(7)?,
-    //         id: row.get(8)?,
-    //     })
-    // })?;
 
     let mut context = Context::new();
     context.insert("project", &project);
@@ -156,7 +135,7 @@ async fn admin(
 
         let mut stmt_edit_project =
             conn.prepare("SELECT * FROM projects ORDER BY id DESC LIMIT 1")?;
-        let editProject: Project = stmt_edit_project.query_row([], |row| {
+        let edit_project: Project = stmt_edit_project.query_row([], |row| {
             Ok(Project {
                 id: row.get("id")?,
                 title: row.get("title")?,
@@ -209,7 +188,7 @@ async fn admin(
             .collect::<Result<Vec<DeleteProject>, _>>()?;
 
         let mut context = Context::new();
-        context.insert("edit_project", &editProject);
+        context.insert("edit_project", &edit_project);
         context.insert("edit_project_list", &edit_project_list);
         context.insert("delete_exhibitions", &delete_exhibitions_by_year);
         context.insert("delete_exhibition_years", &years);

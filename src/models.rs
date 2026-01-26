@@ -91,35 +91,11 @@ pub struct LoginForm {
     pub password: String,
 }
 
-#[derive(Deserialize)]
-pub struct AdminQuery {
-    pub edit_project: Option<String>,
-}
-
-// pub struct ProjectForm {
-//     pub id: u16,
-//     pub title: String,
-//     pub date: String,
-//     pub video_link: Option<String>,
-//     pub concept: String,
-//     pub medium: Option<String>,
-//     pub duration: Option<String>,
-//     pub saved_files: Option<String>,
-//     pub dir: String,
-// }
-
 //TODO: Transform this into a struct instead of a tuple struct
 //for cleaner code when using its 0 field!
 #[derive(Deserialize)]
 pub struct Id {
     pub id: u16,
-}
-
-#[derive(Clone)]
-pub struct TestAppState {
-    pub pwd: String,
-    pub db: PathBuf,
-    pub root_dir: PathBuf,
 }
 
 #[derive(Clone)]

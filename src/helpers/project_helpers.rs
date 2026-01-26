@@ -4,12 +4,10 @@ use futures_util::TryStreamExt;
 use nanoid::nanoid;
 use rusqlite::Error as RusqliteError;
 use rusqlite::{params, Connection};
-// use std::path::{Path, PathBuf};
 use std::{
     fs,
     io::Write,
     path::{Path, PathBuf},
-    process::id,
 };
 
 pub async fn return_project(conn: Connection, id: &u16) -> Result<Project, RusqliteError> {

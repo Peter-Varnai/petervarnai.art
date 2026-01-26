@@ -13,10 +13,9 @@ use actix_web::{
 };
 use futures_util::StreamExt;
 use futures_util::TryStreamExt;
-use nanoid::nanoid;
 use rusqlite::{params, Connection};
 use serde::{Deserialize, Serialize};
-use std::{fs, io::Write, path::PathBuf, process::id};
+use std::{fs, io::Write, path::PathBuf};
 use tera::Context;
 
 pub fn project_service_config(cfg: &mut web::ServiceConfig) {
@@ -33,7 +32,6 @@ async fn get_project(
     state: Data<AppState>,
     project: Query<ProjectNo>,
 ) -> Result<HttpResponse, ApiError> {
-    let tera = &state.tera;
     let project_id: u16 = project.no;
     println!("GET : getting project with id: {}", project_id);
 
