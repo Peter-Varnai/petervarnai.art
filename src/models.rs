@@ -18,7 +18,7 @@ pub struct Exhibition {
     pub title: String,
     pub location: Option<String>,
     pub link: Option<String>,
-    pub big_row: bool,
+    pub r#type: i8,
     pub start_date: String,
     pub till: String,
 }

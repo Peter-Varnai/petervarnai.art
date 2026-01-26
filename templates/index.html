@@ -68,7 +68,7 @@
                         <th class="exhibition_year" colspan="2">{{ year }}</th>
                     </tr>
                     {% for row in exhibitions_table[year] %}
-                    {% if row.big_row %}
+                    {% if row.type == 1 %}
                     <th colspan="2">
                         {{ row.title }}
                     </th>
@@ -76,7 +76,7 @@
                     <tr>
                         <td>
                             {% if row.link != "" %}
-                            <a href="{{row.link}}" target="_blank">{{row.title}}</a>
+                            <a {%if row.type == 2%}class="curated" {%endif%} href="{{row.link}}" target="_blank">{{row.title}}</a>
                             {% else %}
                             {{ row.title }}
                             {% endif %}
@@ -132,7 +132,6 @@
 
     </script>
     <script src="/f/js/menu_functions.js"></script>
-    <!-- <script type="module" src="/f/js/3dScene.js"></script> -->
 </body>
 
 </html>

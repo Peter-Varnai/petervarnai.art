@@ -147,6 +147,10 @@ li {
     display: none;
 }
 
+.curated {
+    font-style: italic;
+}
+
 .exhibition_year {
     padding: 20px 0 12px 5px;
 }
@@ -195,9 +199,6 @@ tr {
 
 #works-window::-webkit-scrollbar {
     display: none;
-    /*width: 0;*/
-    /*height: 0;*/
-    /*background: transparent;*/
 }
 
 
@@ -217,7 +218,6 @@ tr {
 
 
 #images-panel {
-    /*height: 100%;*/
     width: 60%;
 }
 

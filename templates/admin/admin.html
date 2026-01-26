@@ -169,10 +169,24 @@
             </div>
             <form id="exhibitionForm" class="form-row">
                 <div class="full-width">
-                    <label for="big_row">🎯 Single Day Event:</label>
-                    <input type="checkbox" id="big_row" name="big_row">
-                </div>
+                    <label>Exhibition Type:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="type" value="0" checked>
+                            Own Exhibition
+                        </label>
 
+                        <label>
+                            <input type="radio" name="type" value="1">
+                            Single Event
+                        </label>
+
+                        <label>
+                            <input type="radio" name="type" value="2">
+                            Curated
+                        </label>
+                    </div>
+                </div>
                 <div class="full-width">
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required placeholder="Exhibition name...">
@@ -237,27 +251,36 @@
         </button>
     </div>
     <script>
+        function updateTillVisibility() {
+            const selectedType = document.querySelector('input[name="type"]:checked').value;
+            const tillInput = document.getElementById('till');
+            const tillLabel = document.getElementById('tillLabel');
+            const fromInput = document.getElementById('from');
 
-        document.getElementById('big_row').addEventListener('change', function () {
-            let tillInput = document.getElementById('till');
-            let tillLabel = document.getElementById('tillLabel');
-
-            if (this.checked) {
+            if (selectedType === '1') {
                 tillInput.style.display = 'none';
                 tillLabel.style.display = 'none';
-                tillInput.value = document.getElementById('from').value;
+                tillInput.value = fromInput.value;
             } else {
                 tillInput.style.display = '';
                 tillLabel.style.display = '';
             }
-        });
+        }
+
+        document
+            .querySelectorAll('input[name="type"]')
+            .forEach(radio => {
+                radio.addEventListener('change', updateTillVisibility);
+            });
 
         document.getElementById('from').addEventListener('input', function () {
-            let bigRow = document.getElementById('big_row');
-            if (bigRow.checked) {
+            const selectedType = document.querySelector('input[name="type"]:checked').value;
+            if (selectedType === '1') {
                 document.getElementById('till').value = this.value;
             }
         });
+
+        updateTillVisibility();
     </script>
     <script src="/f/js/admin.js"></script>
     <script src="/f/js/submit_forms.js"></script>

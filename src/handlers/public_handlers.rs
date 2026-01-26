@@ -36,8 +36,8 @@ async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
         })?
         .collect::<Result<Vec<_>, rusqlite::Error>>()?;
 
-    let mut exhib_stmt = conn
-        .prepare("SELECT id, name, location, link, big_row, start_date, till FROM exhibitions")?;
+    let mut exhib_stmt =
+        conn.prepare("SELECT id, name, location, link, type, start_date, till FROM exhibitions")?;
 
     let exhibitions = exhib_stmt
         .query_map([], |row| {
@@ -46,7 +46,7 @@ async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
                 title: row.get(1)?,
                 location: row.get(2)?,
                 link: row.get(3)?,
-                big_row: row.get(4)?,
+                r#type: row.get(4)?,
                 start_date: row.get(5)?,
                 till: row.get(6)?,
             })

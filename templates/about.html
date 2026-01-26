@@ -1,7 +1,7 @@
 <table class="exhibitions-list" style="margin: 0 auto; width: 100%; max-width: 700px;">
     <tbody>
         {% for row in exhibitions_table %}
-        {% if row.big_row %}
+        {% if row.type == 1 %}
         <tr>
             <th colspan="2" scope="col">{{row.title}}</th>
         </tr>

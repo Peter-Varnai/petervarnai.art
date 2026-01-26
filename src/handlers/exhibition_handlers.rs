@@ -43,7 +43,7 @@ async fn add_exhibition(
         println!("add exhibition route called");
 
         conn.execute(
-            "INSERT INTO exhibitions (name, start_date, till, location, link, big_row) 
+            "INSERT INTO exhibitions (name, start_date, till, location, link, type) 
             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
             params![
                 form.title,
@@ -51,7 +51,7 @@ async fn add_exhibition(
                 form.till,
                 form.location,
                 form.link,
-                form.big_row,
+                form.r#type,
             ],
         )?;
 

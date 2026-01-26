@@ -1,6 +1,12 @@
 // exhibitions related forms
+
+// exhibitions related forms
 document.getElementById('exhibitionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const typeValue = Number(
+        e.target.querySelector('input[name="type"]:checked').value
+    );
 
     const formData = {
         title: e.target.name.value,
@@ -8,30 +14,36 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
         till: e.target.till.value,
         location: e.target.location.value,
         link: e.target.link.value,
-        big_row: e.target.big_row.checked,
+        type: typeValue,
     };
 
-    const response = await fetch('/exhibition', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-    }).then(response => {
+    try {
+        const response = await fetch('/exhibition', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+
         if (response.ok) {
-            console.log('exhibition added succesfullly')
-            window.location.reload()
-        } else console.error('Error:', error);
-    })
-
-
+            console.log('Exhibition added successfully');
+            window.location.reload();
+        } else {
+            console.error('Failed to add exhibition');
+        }
+    } catch (err) {
+        console.error('Network error:', err);
+    }
 });
+
+
 
 document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         console.log('del button clicked')
         let json_id = JSON.stringify({ 'id': Number(btn.dataset.id) })
-        console.log('sending delete project request :', json_id)
+        console.log('sending delete project request.')
         fetch('/exhibition', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
@@ -52,14 +64,13 @@ document.getElementById('addProjectForm').addEventListener('submit', function(e)
     const form = e.target;
     const formData = new FormData(form);
 
-    console.log(formData)
     fetch('/project', {
         method: 'POST',
         body: formData,
     })
         .then(response => {
             if (response.ok) {
-                console.log("succesful form submission", response)
+                console.log("succesfully added project")
                 window.location.reload()
             } else {
                 console.log("error while submitting form", response)
@@ -80,7 +91,7 @@ document.getElementById('editProjectForm').addEventListener('submit', function(e
         body: formData,
     }).then(response => {
         if (response.ok) {
-            console.log("succesful form submission", response)
+            console.log("succesfully edited project ")
         } else {
             console.log("error while submitting form", response)
         }
@@ -96,14 +107,13 @@ document.querySelectorAll('.delete-project-btn').forEach(btn => {
             'id': Number(btn.dataset.id),
             'folder_path': btn.dataset.folder,
         })
-        console.log('sending request to delete project: ', json)
         fetch('/project', {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: json
         }).then(r => {
-            console.log('answer :', r)
             if (r.ok) {
+                console.log("succesfully deleted project")
                 window.location.reload();
             } else console.log('error deleting project', json);
         });
@@ -113,7 +123,6 @@ document.querySelectorAll('.delete-project-btn').forEach(btn => {
 // SELECT WHICH PROJECT TO EDIT
 document.querySelectorAll('.editProjectBtn').forEach(btn => {
     btn.addEventListener('click', function() {
-        console.log('edit project button pressed', btn.dataset.id)
         fetch(`/project?no=${btn.dataset.id}`)
             .then(r => r.json())
             .then(project => {
@@ -127,14 +136,12 @@ document.querySelectorAll('.editProjectBtn').forEach(btn => {
                 form.querySelector('input[name="dir"]').value = project.dir;
                 form.querySelector('input[name="id"]').value = project.id;
                 renderImageGallery(project);
-                console.log('Form populated with:', project);
             })
             .catch(err => console.log('Error:', err));
     })
 })
 
 function renderImageGallery(project) {
-    console.log(project)
     const gallery = document.getElementById("image-gallery");
     gallery.innerHTML = "";
     gallery.dataset.projectId = project.dir;
@@ -188,8 +195,7 @@ document.getElementById("upload-images-btn").addEventListener("click", async () 
 
         if (!res.ok) throw new Error();
 
-        const data = await res.json(); // 👈 read response
-        console.log(data);
+        const data = await res.json();
 
         renderImageGallery({
             dir: projectDir,
@@ -197,6 +203,8 @@ document.getElementById("upload-images-btn").addEventListener("click", async () 
         });
 
         input.value = "";
+
+        console.log("succesfully uploaded picture/s")
 
     } catch {
         alert("Image upload failed.");
@@ -226,6 +234,7 @@ document.getElementById("image-gallery").addEventListener("click", async (e) => 
         const { saved_files } = await res.json();
         saved_files.dir = dir
         renderImageGallery({ dir, saved_files });
+        console.log("succesfully deleted project")
 
     } catch {
         alert("Failed to delete image.");
