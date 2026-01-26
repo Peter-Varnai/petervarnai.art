@@ -2,26 +2,22 @@ use crate::{
     error::AppError,
     helpers::return_project,
     models::{
-        AppState, DeleteExhibition, DeleteProject, EditProjectListItem, Exhibition, LoginForm,
-        Project, ProjectList, ProjectNo,
+        AppState, DeleteExhibitionAdminTemp, DeleteProjectAdminTemp, EditProjectAdminTemp,
+        Exhibition, Project, ProjectQueryRequest, ProjectsIndexTemp,
     },
 };
 use actix_identity::Identity;
 use actix_web::{
-    get, post,
+    get,
     web::{self, Data, Query},
-    HttpMessage, HttpRequest, HttpResponse, Responder,
+    HttpResponse,
 };
 use rusqlite::Connection;
 use std::collections::HashMap;
 use tera::Context;
 
 pub fn public_service_config(cfg: &mut web::ServiceConfig) {
-    cfg.service(index)
-        .service(project)
-        .service(admin)
-        .service(login)
-        .service(logout);
+    cfg.service(index).service(project).service(admin);
 }
 
 #[get("/")]
@@ -33,7 +29,7 @@ async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
     let mut stmt = conn.prepare("SELECT id, title FROM projects")?;
     let projects = stmt
         .query_map([], |row| {
-            Ok(ProjectList {
+            Ok(ProjectsIndexTemp {
                 id: row.get(0)?,
                 title: row.get(1)?,
             })
@@ -81,10 +77,15 @@ async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
     Ok(HttpResponse::Ok().content_type("text/html").body(rendered))
 }
 
+// TODO: design a better url builder system where the title of the project is included as wel, not
+// the project id alone!
+// consider re-desigining the front page so urls lead to different projects, but selectin a project
+// from the main page doesnt while changes the url, doesnt trigger a full page reload!
+// the fluid uninterrupted background of the webstie is a key design elemetn!
 #[get("/prj")]
 async fn project(
     state: Data<AppState>,
-    project: Query<ProjectNo>,
+    project: Query<ProjectQueryRequest>,
 ) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
     let project_id: u16 = project.no;
@@ -126,7 +127,7 @@ async fn admin(
         let mut stmt_edit_project_list = conn.prepare("SELECT id, title FROM projects")?;
         let edit_project_list = stmt_edit_project_list
             .query_map([], |row| {
-                Ok(EditProjectListItem {
+                Ok(EditProjectAdminTemp {
                     project_id: row.get(0)?,
                     project_title: row.get(1)?,
                 })
@@ -151,9 +152,9 @@ async fn admin(
         })?;
 
         let mut stmt_exhibitions = conn.prepare("SELECT id, name, start_date FROM exhibitions")?;
-        let delete_exhibitions: Vec<DeleteExhibition> = stmt_exhibitions
+        let delete_exhibitions: Vec<DeleteExhibitionAdminTemp> = stmt_exhibitions
             .query_map([], |row| {
-                Ok(DeleteExhibition {
+                Ok(DeleteExhibitionAdminTemp {
                     id: row.get(0)?,
                     name: row.get(1)?,
                     start_date: row.get(2)?,
@@ -161,7 +162,8 @@ async fn admin(
             })?
             .collect::<Result<Vec<_>, _>>()?;
 
-        let mut delete_exhibitions_by_year: HashMap<String, Vec<DeleteExhibition>> = HashMap::new();
+        let mut delete_exhibitions_by_year: HashMap<String, Vec<DeleteExhibitionAdminTemp>> =
+            HashMap::new();
 
         for e in &delete_exhibitions {
             let year = e.start_date.chars().take(4).collect::<String>();
@@ -179,13 +181,13 @@ async fn admin(
         let delete_projects = conn
             .prepare("SELECT id, dir, title FROM projects")?
             .query_map([], |row| {
-                Ok(DeleteProject {
+                Ok(DeleteProjectAdminTemp {
                     id: row.get(0)?,
                     folder_path: row.get(1)?,
                     name: row.get(2)?,
                 })
             })?
-            .collect::<Result<Vec<DeleteProject>, _>>()?;
+            .collect::<Result<Vec<DeleteProjectAdminTemp>, _>>()?;
 
         let mut context = Context::new();
         context.insert("edit_project", &edit_project);
@@ -197,28 +199,4 @@ async fn admin(
 
         Ok(HttpResponse::Ok().body(html))
     }
-}
-
-#[post("/login")]
-async fn login(
-    state: web::Data<AppState>,
-    form: web::Form<LoginForm>,
-    request: HttpRequest,
-) -> impl Responder {
-    println!("login called");
-    if form.password == state.pwd {
-        Identity::login(&request.extensions(), "admin".into()).expect("Failed to log in");
-        HttpResponse::Found()
-            .append_header(("Location", "/admin"))
-            .finish()
-    } else {
-        HttpResponse::Unauthorized().body("Invalid credentials")
-    }
-}
-
-#[post("/logout")]
-async fn logout(user: Identity) -> impl Responder {
-    user.logout();
-    println!("Log out called");
-    HttpResponse::Ok().body("Logged out!")
 }

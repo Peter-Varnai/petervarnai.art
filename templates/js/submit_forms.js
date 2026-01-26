@@ -11,18 +11,20 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
         big_row: e.target.big_row.checked,
     };
 
-    try {
-        const response = await fetch('/exhibition', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
+    const response = await fetch('/exhibition', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    }).then(response => {
+        if (response.ok) {
+            console.log('exhibition added succesfullly')
+            window.location.reload()
+        } else console.error('Error:', error);
+    })
 
-    } catch (error) {
-        console.error('Error:', error);
-    }
+
 });
 
 document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
@@ -44,7 +46,6 @@ document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
 
 
 
-
 // projects related forms
 document.getElementById('addProjectForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -59,6 +60,7 @@ document.getElementById('addProjectForm').addEventListener('submit', function(e)
         .then(response => {
             if (response.ok) {
                 console.log("succesful form submission", response)
+                window.location.reload()
             } else {
                 console.log("error while submitting form", response)
             }
@@ -76,14 +78,13 @@ document.getElementById('editProjectForm').addEventListener('submit', function(e
     fetch('/project', {
         method: 'PUT',
         body: formData,
+    }).then(response => {
+        if (response.ok) {
+            console.log("succesful form submission", response)
+        } else {
+            console.log("error while submitting form", response)
+        }
     })
-        .then(response => {
-            if (response.ok) {
-                console.log("succesful form submission", response)
-            } else {
-                console.log("error while submitting form", response)
-            }
-        })
         .catch(error => {
             console.error('error:', error);
         });
@@ -102,8 +103,9 @@ document.querySelectorAll('.delete-project-btn').forEach(btn => {
             body: json
         }).then(r => {
             console.log('answer :', r)
-            if (r.ok) window.location = r.url;
-            else console.log('error deleting project', json);
+            if (r.ok) {
+                window.location.reload();
+            } else console.log('error deleting project', json);
         });
     })
 })

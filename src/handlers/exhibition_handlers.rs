@@ -1,6 +1,6 @@
 use crate::{
     error::ApiError,
-    models::{AppState, Exhibition, Id},
+    models::{AppState, DeleteExhibitionRequest, Exhibition},
 };
 use actix_identity::Identity;
 use actix_web::{
@@ -64,7 +64,7 @@ async fn add_exhibition(
 #[delete("/exhibition")]
 async fn delete_exhibition(
     state: Data<AppState>,
-    id: Json<Id>,
+    id: Json<DeleteExhibitionRequest>,
     identity: Option<Identity>,
 ) -> Result<HttpResponse, ApiError> {
     let tera = &state.tera;

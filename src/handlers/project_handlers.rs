@@ -1,7 +1,9 @@
 use crate::{
     error::{api_err::ApiErrorKind, ApiError},
     helpers::{handle_project_form, resolve_filename_collision, return_project, sanitize_filename},
-    models::{AppState, DeleteProject, Project, ProjectNo},
+    models::{
+        AppState, DeleteProjectAdminTemp, DeleteProjectRequest, Project, ProjectQueryRequest,
+    },
 };
 
 use actix_identity::Identity;
@@ -30,7 +32,7 @@ pub fn project_service_config(cfg: &mut web::ServiceConfig) {
 #[get("/project")]
 async fn get_project(
     state: Data<AppState>,
-    project: Query<ProjectNo>,
+    project: Query<ProjectQueryRequest>,
 ) -> Result<HttpResponse, ApiError> {
     let project_id: u16 = project.no;
     println!("GET : getting project with id: {}", project_id);
@@ -154,14 +156,14 @@ async fn update_project(
 #[delete("/project")]
 async fn delete_project(
     state: Data<AppState>,
-    delete_project: Json<DeleteProject>,
+    delete_project: Json<DeleteProjectRequest>,
     identity: Option<Identity>,
 ) -> Result<HttpResponse, ApiError> {
-    let tera = &state.tera;
     println!("delete project called");
 
     if identity.is_none() {
         // if false {
+        let tera = &state.tera;
         let context = Context::new();
         let login = tera.render("login.html", &context)?;
 
@@ -178,7 +180,18 @@ async fn delete_project(
             params![delete_project.id],
         )?;
 
-        Ok(HttpResponse::Ok().json("Project deleted succesfully!"))
+        let delete_projects = conn
+            .prepare("SELECT id, dir, title FROM projects")?
+            .query_map([], |row| {
+                Ok(DeleteProjectAdminTemp {
+                    id: row.get(0)?,
+                    folder_path: row.get(1)?,
+                    name: row.get(2)?,
+                })
+            })?
+            .collect::<Result<Vec<DeleteProjectAdminTemp>, _>>()?;
+
+        Ok(HttpResponse::Ok().json(""))
     }
 }
 
