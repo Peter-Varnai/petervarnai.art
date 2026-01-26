@@ -3,6 +3,13 @@ body {
     padding: 0;
     font-family: "Work Sans", sans-serif;
     overflow: clip;
+    /* Keep for Chrome */
+    overflow: -moz-hidden-unscrollable;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 a {
@@ -141,10 +148,22 @@ li {
     overflow: scroll;
     display: none;
     flex-direction: column;
+    /* Cross-browser scrollbar hiding */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
 }
 
 #about-window::-webkit-scrollbar {
     display: none;
+}
+
+#about-window {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .curated {
@@ -195,10 +214,22 @@ tr {
     display: none;
     flex-direction: column;
     max-width: 960px;
+    /* Cross-browser scrollbar hiding */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
 }
 
 #works-window::-webkit-scrollbar {
     display: none;
+}
+
+#works-window {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 
@@ -262,4 +293,17 @@ tr {
 .thumbnail-image {
     width: 20%;
     margin-right: 4px;
+}
+
+/* Additional cross-browser scrollbar hiding */
+* {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Edge */
 }

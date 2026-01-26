@@ -1,0 +1,317 @@
+        :root {
+            --bg-gradient: linear-gradient(135deg, #000000 0%, #001100 100%);
+            --container-bg: rgba(0, 20, 0, 0.85);
+            --border-color: #00ff00;
+            --accent-color: #00ff00;
+            --input-bg: rgba(0, 40, 0, 0.7);
+            --btn-gradient: linear-gradient(to right, #003300, #001100);
+            --btn-hover-gradient: linear-gradient(to right, #00aa00, #005500);
+            --text-glow: 0 0 1px #00ff00, 0 0 1px #00ff00;
+            --scan-line: rgba(0, 255, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            margin: 0;
+            font-family: "Sixtyfour Convergence", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+            font-variation-settings:
+                "BLED" 0,
+                "SCAN" 0,
+                "XELA" 0,
+                "YELA" 0;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Matrix rain effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+            background-size: 4px 4px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 95%, rgba(0, 255, 0, 0.1) 100%);
+            animation: scan 13s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(100%);
+            }
+        }
+
+        .login-container {
+            background: var(--container-bg);
+            padding: 2.5rem;
+            border-radius: 0;
+            min-width: 320px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--text-glow);
+            position: relative;
+            overflow: hidden;
+            animation: glitch-shake 5s ease infinite;
+        }
+
+        .login-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes glitch-shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            95% {
+                transform: translateX(0);
+            }
+
+            96% {
+                transform: translateX(-2px);
+            }
+
+            97% {
+                transform: translateX(2px);
+            }
+
+            98% {
+                transform: translateX(-1px);
+            }
+
+            99% {
+                transform: translateX(1px);
+            }
+        }
+
+        .login-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            color: var(--accent-color);
+            font-size: 2.2rem;
+            text-shadow: var(--text-glow);
+            font-family: "Sixtyfour Convergence", sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .login-title h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            position: relative;
+            margin: 0;
+        }
+
+        .login-title h1::after {
+            content: "_";
+            animation: blink 1s infinite;
+            position: absolute;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            animation: wiggle 1.5s infinite;
+            filter: sepia(1) hue-rotate(90deg) contrast(1.5);
+        }
+
+        @keyframes wiggle {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-10deg);
+            }
+
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 1.1rem;
+            color: #00ff00;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            text-shadow: var(--text-glow);
+            font-family: "Courier New", monospace;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0;
+            font-size: 1.1rem;
+            background: var(--input-bg);
+            transition: all 0.3s;
+            box-sizing: border-box;
+            font-family: "Courier New", monospace;
+            color: #00ff00;
+            text-shadow: var(--text-glow);
+        }
+
+        input[type="password"]:focus {
+            border-color: #00ff00;
+            background: rgba(0, 40, 0, 0.9);
+            outline: none;
+            box-shadow: var(--text-glow);
+            transform: translateX(5px);
+        }
+
+        input[type="password"]::placeholder {
+            color: #009900;
+            opacity: 0.7;
+        }
+
+        input[type="password"]:focus::after {
+            content: "_";
+            animation: blink 1s infinite;
+            color: #00ff00;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #00ff00;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1rem;
+            font-family: "Sixtyfour Convergence", sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: "";
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: var(--text-glow);
+            transform: scale(1.02);
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: #009900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-family: "Courier New", monospace;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .password-hint {
+            font-size: 0.85rem;
+            color: #009900;
+            margin-top: 0.3rem;
+            font-style: italic;
+            font-family: "Courier New", monospace;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        /* Binary code background effect */
+        .login-container {
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 20%);
+        }

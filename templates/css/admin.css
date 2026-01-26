@@ -312,6 +312,7 @@ button[type="submit"],
     letter-spacing: 1px;
     position: relative;
     overflow: hidden;
+    margin: 34px 0;
 }
 
 button[type="submit"]::before,
@@ -453,7 +454,6 @@ button[type="submit"]:hover,
     border: 1px solid var(--border-color);
     margin: 5px;
     transition: all 0.3s;
-    filter: sepia(1) hue-rotate(90deg) contrast(1.5);
 }
 
 .thumbnail:hover {
