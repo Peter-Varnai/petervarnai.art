@@ -4,5 +4,6 @@
 /templates/dist/
 /templates/static/
 /peter_website.db
+/sajat_weblap.db
 /.vite
 /.env

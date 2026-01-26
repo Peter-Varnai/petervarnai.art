@@ -4,7 +4,13 @@ use futures_util::TryStreamExt;
 use nanoid::nanoid;
 use rusqlite::Error as RusqliteError;
 use rusqlite::{params, Connection};
-use std::{fs, io::Write, path::PathBuf, process::id};
+// use std::path::{Path, PathBuf};
+use std::{
+    fs,
+    io::Write,
+    path::{Path, PathBuf},
+    process::id,
+};
 
 pub async fn return_project(conn: Connection, id: &u16) -> Result<Project, RusqliteError> {
     let mut proj_list_stmt = conn.prepare(
@@ -165,4 +171,34 @@ pub async fn handle_project_form(
         date,
         saved_files,
     })
+}
+
+pub fn resolve_filename_collision(dir: &Path, filename: &str) -> PathBuf {
+    let path = Path::new(filename);
+
+    let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("file");
+
+    let ext = path.extension().and_then(|e| e.to_str());
+
+    let mut candidate = match ext {
+        Some(ext) => dir.join(format!("{stem}.{ext}")),
+        None => dir.join(stem),
+    };
+
+    let mut counter = 1;
+    while candidate.exists() {
+        candidate = match ext {
+            Some(ext) => dir.join(format!("{stem}_{counter}.{ext}")),
+            None => dir.join(format!("{stem}_{counter}")),
+        };
+        counter += 1;
+    }
+
+    candidate
+}
+
+pub fn sanitize_filename(name: &str) -> String {
+    name.chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '.' || *c == '_' || *c == '-')
+        .collect()
 }

@@ -54,7 +54,7 @@ impl From<std::io::Error> for ApiError {
 impl fmt::Display for ApiError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self.0 {
-            ApiErrorKind::JsonError(e) => write!(f, "Jseon serialization error: {}", e),
+            ApiErrorKind::JsonError(e) => write!(f, "Json serialization error: {}", e),
             ApiErrorKind::SqlError(e) => write!(f, "Database problem: {}", e),
             ApiErrorKind::DateFormattingError(e) => write!(f, "Date formatting problem: {}", e),
             ApiErrorKind::TemplatingError(e) => write!(f, "Template rendering problem: {}", e),

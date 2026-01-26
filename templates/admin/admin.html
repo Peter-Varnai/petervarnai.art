@@ -1,129 +1,227 @@
 <head>
-    <title>Admin</title>
-    <!-- <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script> -->
-    <link rel="stylesheet" href="/f/css/admin.css">
-</head>
+
+    <head>
+        <title>Admin Panel</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/f/css/admin.css">
+    </head>
 
 <body>
-    <div class="container">
-        <div class="tabs">
-            <button class="tab active" id="addProjectTab" type="button">Add Project</button>
-            <button class="tab" id="editProjectTab" type="button">Edit Project</button>
-            <button class="tab" id="deleteProjectTab" type="button">Delete Project</button>
-            <button class="tab" id="addExhibitionTab" type="button">Add Exhibition</button>
-            <button class="tab" id="deleteExhibitionTab" type="button">Delete Exhibition</button>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>Admin Panel</h1>
+            <button class="to-main-page" type="button">Back to main page</button>
         </div>
 
-        <div id="addProjectSection">
-            <div class="section-title">Add New Project</div>
-            <form id="addProjectForm" enctype="multipart/form-data">
-                <label>Title:</label>
-                <input type="text" name="title" required>
+        <div class="tabs">
+            <button class="tab active" id="addProjectTab" type="button">➕ Add Project</button>
+            <button class="tab" id="editProjectTab" type="button">✏️ Edit Project</button>
+            <button class="tab" id="deleteProjectTab" type="button">🗑️ Delete Project</button>
+            <button class="tab" id="addExhibitionTab" type="button">➕ Add Exhibition</button>
+            <button class="tab" id="deleteExhibitionTab" type="button">🗑️ Delete Exhibition</button>
+        </div>
 
-                <label>Date:</label>
-                <input type="month" name="date" required>
+        <!-- Add Project Section -->
+        <div id="addProjectSection" class="section">
+            <div class="section-title">
+                <span>📁</span>
+                Add New Project
+            </div>
+            <form id="addProjectForm" enctype="multipart/form-data" class="form-row">
+                <div class="full-width">
+                    <label>Title:</label>
+                    <input type="text" name="title" required placeholder="Project title...">
+                </div>
 
-                <label>Video link:</label>
-                <input type="text" name="video_link">
+                <div>
+                    <label>Date:</label>
+                    <input type="month" name="date" required>
+                </div>
 
-                <label>Medium:</label>
-                <input type="text" name="medium">
+                <div>
+                    <label>Video link:</label>
+                    <input type="text" name="video_link" placeholder="Optional video URL...">
+                </div>
 
-                <label>Duration:</label>
-                <input type="text" name="duration">
+                <div>
+                    <label>Medium:</label>
+                    <input type="text" name="medium" placeholder="e.g., Digital, Painting...">
+                </div>
 
-                <label>Concept:</label>
-                <textarea id="add_concept" name="concept" rows="5" cols="40" required></textarea>
+                <div>
+                    <label>Duration:</label>
+                    <input type="text" name="duration" placeholder="e.g., 3:25 minutes">
+                </div>
 
-                <label>Upload pictures:</label>
-                <input type="file" name="files" multiple accept="image/*">
+                <div class="full-width">
+                    <label>Concept:</label>
+                    <textarea name="concept" rows="5" required placeholder="Describe the project concept..."></textarea>
+                </div>
 
-                <button type="submit">Submit</button>
+                <div class="full-width">
+                    <label>📷 Upload pictures:</label>
+                    <input type="file" name="files" multiple accept="image/*">
+                </div>
+
+                <div class="full-width">
+                    <button type="submit">🚀 Submit Project</button>
+                </div>
             </form>
         </div>
-        <div id="editProjectSection" class="hidden">
-            <div class="section-title">Edit Project</div>
+
+        <!-- Edit Project Section -->
+        <div id="editProjectSection" class="section hidden">
+            <div class="section-title">
+                <span>✏️</span>
+                Edit Project
+            </div>
             <ul id="editProjectList">
                 {% for project in edit_project_list %}
                 <li>
-                    <button class="editProjectBtn" data-id="{{ project.project_id }}">{{ project.project_title
-                        }}</button>
+                    <button class="editProjectBtn" data-id="{{ project.project_id }}">
+                        {{ project.project_title }}
+                    </button>
                 </li>
                 {% endfor %}
             </ul>
-            <form id="editProjectForm" enctype="multipart/form-data">
-                <label>Title:</label>
-                <input type="text" name="title" value="{{ edit_project.title }}" required>
 
-                <label>Date:</label>
-                <input type="month" name="date" value="{{ edit_project.date }}" required>
+            <form id="editProjectForm" enctype="multipart/form-data" class="form-row">
+                <div class="full-width">
+                    <label>Title:</label>
+                    <input type="text" name="title" value="{{ edit_project.title }}" required>
+                </div>
 
-                <label>Video link:</label>
-                <input type="text" name="video_link" value="{{ edit_project.video_link }}">
+                <div>
+                    <label>Date:</label>
+                    <input type="month" name="date" value="{{ edit_project.date }}" required>
+                </div>
 
-                <label>Medium:</label>
-                <input type="text" name="medium" value="{{ edit_project.medium }}">
+                <div>
+                    <label>Video link:</label>
+                    <input type="text" name="video_link" value="{{ edit_project.video_link }}">
+                </div>
 
-                <label>Duration:</label>
-                <input type="text" name="duration" value="{{ edit_project.duration }}">
+                <div>
+                    <label>Medium:</label>
+                    <input type="text" name="medium" value="{{ edit_project.medium }}">
+                </div>
 
-                <label>Concept:</label>
-                <textarea name="concept" rows="5" cols="40">{{ edit_project.concept }}</textarea>
+                <div>
+                    <label>Duration:</label>
+                    <input type="text" name="duration" value="{{ edit_project.duration }}">
+                </div>
 
-                {% for pic in edit_project.saved_files %}
-                <!-- <img src="/f/static/images/{{ edit_project.dir }}/{{ pic }}" class="thumbnail"> -->
-                {% endfor %}
+                <div class="full-width">
+                    <label>Concept:</label>
+                    <textarea name="concept" rows="5">{{ edit_project.concept }}</textarea>
+                </div>
 
                 <input type="hidden" name="dir" value="{{ edit_project.dir }}">
                 <input type="hidden" name="id" value="{{ edit_project.id }}">
 
-                <button type="submit">Submit</button>
+                <div class="full-width">
+                    <button type="submit">💾 Save Changes</button>
+                </div>
             </form>
+
+            <div id="image-gallery" data-project-id="{{ edit_project.dir }}">
+                {% for pic in edit_project.saved_files %}
+                <div class="image-item" data-filename="{{ pic }}">
+                    <img src="/f/static/images/{{ edit_project.dir }}/{{ pic }}" class="thumbnail" alt="{{ pic }}">
+                    <button type="button" class="delete-image-btn">Delete</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="image-gallery" data-project-id="">
+                <!-- Images will be injected here -->
+            </div>
+            <div id="image-upload-panel">
+                <input type="file" id="image-upload-input" accept="image/*" multiple>
+                <button type="button" id="upload-images-btn">
+                    Upload images
+                </button>
+            </div>
         </div>
 
-        <div id='deleteProjectSection' class="hidden">
+        <!-- Delete Project Section -->
+        <div id='deleteProjectSection' class="section hidden">
+            <div class="section-title">
+                <span>⚠️</span>
+                Delete Project
+            </div>
             {% for proj in delete_projects %}
             <button class="delete-project-btn" data-id="{{ proj.id }}" data-folder="{{ proj.folder_path }}">
-                {{ proj.name }}</button>
+                🗑️ {{ proj.name }}
+            </button>
             {% endfor %}
         </div>
 
-        <div id="addExhibitionSection" class="hidden">
-            <div class="section-title">Add New Exhibition/Event</div>
-            <form id="exhibitionForm">
-                <label for="big_row">Event:</label>
-                <input type="checkbox" id="big_row" name="big_row">
+        <!-- Add Exhibition Section -->
+        <div id="addExhibitionSection" class="section hidden">
+            <div class="section-title">
+                <span>📅</span>
+                Add New Exhibition/Event
+            </div>
+            <form id="exhibitionForm" class="form-row">
+                <div class="full-width">
+                    <label for="big_row">🎯 Single Day Event:</label>
+                    <input type="checkbox" id="big_row" name="big_row">
+                </div>
 
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <div class="full-width">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Exhibition name...">
+                </div>
 
-                <label for="from">From (YYYY-MM-DD):</label>
-                <input type="date" id="from" name="start_date" required>
+                <div>
+                    <label for="from">📅 From:</label>
+                    <input type="date" id="from" name="start_date" required>
+                </div>
 
-                <label for="till" id="tillLabel">Till (YYYY-MM-DD):</label>
-                <input type="date" id="till" name="till" required>
+                <div id="tillContainer">
+                    <label for="till" id="tillLabel">📅 Till:</label>
+                    <input type="date" id="till" name="till" required>
+                </div>
 
-                <label for="location" id="locationLabel">Location:</label>
-                <input type="text" id="location" name="location" required>
+                <div class="full-width">
+                    <label for="location" id="locationLabel">📍 Location:</label>
+                    <input type="text" id="location" name="location" required placeholder="Event location...">
+                </div>
 
-                <label for="link">Link:</label>
-                <input type="url" id="link" name="link">
+                <div class="full-width">
+                    <label for="link">🔗 Link:</label>
+                    <input type="url" id="link" name="link" placeholder="https://...">
+                </div>
 
-                <button type="submit">Submit</button>
+                <div class="full-width">
+                    <button type="submit">✅ Submit Event</button>
+                </div>
             </form>
         </div>
 
-        <div id='deleteExhibitionSection' class="hidden">
+        <!-- Delete Exhibition Section -->
+        <div id='deleteExhibitionSection' class="section hidden">
+            <div class="section-title">
+                <span>⚠️</span>
+                Delete Exhibition
+            </div>
             <div class="years-container">
                 {% for year in delete_exhibition_years %}
                 <div class="year-section">
                     <div class="year-header">
-                        {{ year }}
+                        📅 {{ year }}
                     </div>
                     <div class="exhibitions-row">
                         {% for de in delete_exhibitions[year] %}
                         <div>
-                            <button class="delete-exhib-btn" data-id="{{ de.id }}">{{ de.name }}</button>
+                            <button class="delete-exhib-btn" data-id="{{ de.id }}">
+                                🗑️ {{ de.name }}
+                            </button>
                         </div>
                         {% endfor %}
                     </div>
@@ -131,11 +229,15 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
 
+        <!-- Logout Button -->
+        <button class="to-main-page" type="button">Back to main page</button>
+        <button class="logout-btn" type="button">
+            🔓 Logout
+        </button>
     </div>
-
     <script>
+
         document.getElementById('big_row').addEventListener('change', function () {
             let tillInput = document.getElementById('till');
             let tillLabel = document.getElementById('tillLabel');
@@ -157,12 +259,6 @@
             }
         });
     </script>
-
     <script src="/f/js/admin.js"></script>
     <script src="/f/js/submit_forms.js"></script>
-    <!-- <script> -->
-    s
-    <!--     CKEDITOR.replace('add_concept'); -->
-    <!-- </script> -->
-
 </body>

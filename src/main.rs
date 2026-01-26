@@ -12,6 +12,8 @@ use helpers::server_config;
 use models::AppState;
 use tera::Tera;
 
+use crate::handlers::exhibition_service_config;
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let tera = match Tera::new("templates/**/*.html") {
@@ -60,6 +62,7 @@ async fn main() -> std::io::Result<()> {
             .configure(public_service_config)
             .configure(admin_service_config)
             .configure(project_service_config)
+            .configure(exhibition_service_config)
     })
     .bind((host, port))?
     .run()

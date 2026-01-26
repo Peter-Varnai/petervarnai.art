@@ -1,6 +1,6 @@
 use crate::{
-    error::ApiError,
-    helpers::{handle_project_form, return_project},
+    error::{api_err::ApiErrorKind, ApiError},
+    helpers::{handle_project_form, resolve_filename_collision, return_project, sanitize_filename},
     models::{AppState, DeleteProject, Project, ProjectNo},
 };
 
@@ -9,11 +9,13 @@ use actix_multipart::Multipart;
 use actix_web::{
     delete, get, post, put,
     web::{self, Data, Json, Query},
-    HttpResponse,
+    HttpResponse, Result,
 };
+use futures_util::StreamExt;
 use futures_util::TryStreamExt;
 use nanoid::nanoid;
 use rusqlite::{params, Connection};
+use serde::{Deserialize, Serialize};
 use std::{fs, io::Write, path::PathBuf, process::id};
 use tera::Context;
 
@@ -21,7 +23,9 @@ pub fn project_service_config(cfg: &mut web::ServiceConfig) {
     cfg.service(add_project)
         .service(update_project)
         .service(get_project)
-        .service(delete_project);
+        .service(delete_project)
+        .service(upload_project_images)
+        .service(delete_project_image);
 }
 
 #[get("/project")]
@@ -178,4 +182,156 @@ async fn delete_project(
 
         Ok(HttpResponse::Ok().json("Project deleted succesfully!"))
     }
+}
+
+#[derive(Serialize)]
+struct PicUpdateResponse {
+    saved_files: Vec<String>,
+}
+
+#[post("/projects/pic_update/{dir}/images")]
+pub async fn upload_project_images(
+    state: web::Data<AppState>,
+    path: web::Path<String>,
+    mut payload: Multipart,
+) -> Result<HttpResponse, ApiError> {
+    let project_dir = path.into_inner();
+
+    // --- DB: fetch project info ---
+    let (db_dir, mut saved_files): (String, Vec<String>) = {
+        let db_path = &state.db;
+        let conn = Connection::open(db_path)?;
+
+        let mut stmt = conn.prepare("SELECT dir, pictures FROM projects WHERE dir = ?1")?;
+
+        stmt.query_row([&project_dir], |row| {
+            let dir: String = row.get(0)?;
+            let pictures: String = row.get(1)?;
+            let parsed: Vec<String> = serde_json::from_str(&pictures).unwrap_or_default();
+            Ok((dir, parsed))
+        })?
+    };
+
+    // --- Resolve filesystem path ---
+    let images_dir: PathBuf = state
+        .root_dir
+        .join("templates")
+        .join("static")
+        .join("images")
+        .join(&db_dir);
+
+    fs::create_dir_all(&images_dir)?;
+
+    let mut newly_added = Vec::new();
+
+    // --- Process multipart ---
+    while let Some(item) = payload.next().await {
+        let mut field = item?;
+
+        if field.name() != Some("images") {
+            continue;
+        }
+
+        let content_disposition = field.content_disposition().unwrap();
+        let filename = content_disposition
+            .get_filename()
+            .expect("File save failed");
+
+        let sanitized = sanitize_filename(filename);
+        let target_path = resolve_filename_collision(&images_dir, &sanitized);
+
+        let final_name = target_path
+            .file_name()
+            .and_then(|n| n.to_str())
+            .unwrap()
+            .to_string();
+
+        // --- Write file ---
+        let mut f = fs::File::create(&target_path)?;
+
+        while let Some(chunk) = field.next().await {
+            let data = chunk?;
+            f.write_all(&data)?;
+        }
+
+        newly_added.push(final_name);
+    }
+
+    // --- Update DB (fail fast: only now) ---
+    saved_files.extend(newly_added.clone());
+    let pictures_json = serde_json::to_string(&saved_files)?;
+
+    {
+        let db_path = &state.db;
+        let conn = Connection::open(db_path)?;
+        conn.execute(
+            "UPDATE projects SET pictures = ?1 WHERE dir = ?2",
+            (&pictures_json, &db_dir),
+        )?;
+    }
+
+    Ok(HttpResponse::Ok().json(PicUpdateResponse { saved_files }))
+}
+
+#[derive(Serialize)]
+struct PicDeleteResponse {
+    saved_files: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct PicDeleteRequest {
+    pub filename: String,
+}
+
+#[delete("/projects/pic_update/{dir}/images")]
+pub async fn delete_project_image(
+    state: web::Data<AppState>,
+    path: web::Path<String>,
+    body: web::Json<PicDeleteRequest>,
+) -> Result<HttpResponse, ApiError> {
+    let dir = path.into_inner();
+    let filename = &body.filename;
+
+    // --- Load project from DB ---
+    let (db_dir, pictures): (String, String) = {
+        let conn = Connection::open(&state.db)?;
+        let mut stmt = conn.prepare("SELECT dir, pictures FROM projects WHERE dir = ?1")?;
+
+        stmt.query_row([&dir], |row| Ok((row.get(0)?, row.get(1)?)))?
+    };
+
+    let mut saved_files: Vec<String> = serde_json::from_str(&pictures)?;
+
+    // --- Ensure image exists ---
+    if !saved_files.contains(filename) {
+        return Err(ApiError(ApiErrorKind::FileSystemError(
+            std::io::Error::new(std::io::ErrorKind::NotFound, "Image not found in project"),
+        )));
+    }
+
+    // --- Resolve filesystem path ---
+    let image_path = state
+        .root_dir
+        .join("templates")
+        .join("static")
+        .join("images")
+        .join(&db_dir)
+        .join(filename);
+
+    // --- Delete file ---
+    fs::remove_file(&image_path)?;
+
+    // --- Update DB ---
+    saved_files.retain(|f| f != filename);
+    let pictures_json = serde_json::to_string(&saved_files)?;
+
+    {
+        let conn = Connection::open(&state.db)?;
+        conn.execute(
+            "UPDATE projects SET pictures = ?1 WHERE dir = ?2",
+            (&pictures_json, &db_dir),
+        )?;
+    }
+
+    Ok(HttpResponse::Ok().json(PicDeleteResponse { saved_files }))
 }
