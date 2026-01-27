@@ -55,9 +55,7 @@ async fn add_exhibition(
             ],
         )?;
 
-        Ok(HttpResponse::Found()
-            .append_header(("Location", "/admin"))
-            .finish())
+        Ok(HttpResponse::Ok().json("succesfully added exhibition"))
     }
 }
 
@@ -83,8 +81,6 @@ async fn delete_exhibition(
 
         conn.execute("DELETE FROM exhibitions WHERE id = ?1", params![id.id])?;
 
-        Ok(HttpResponse::Found()
-            .append_header(("Location", "/admin"))
-            .finish())
+        Ok(HttpResponse::Ok().json("successfully deleted exhibition"))
     }
 }

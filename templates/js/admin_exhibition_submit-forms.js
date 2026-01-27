@@ -48,7 +48,7 @@ document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
             headers: { 'Content-Type': 'application/json' },
             body: json_id
         }).then(r => {
-            if (r.redirected) window.location = r.url;
+            if (r.ok) window.location = r.url;
             else location.reload();
         });
 
