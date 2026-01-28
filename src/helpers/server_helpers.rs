@@ -20,7 +20,7 @@ pub fn load_local_env_file() {
     for line in reader.lines() {
         let line = line.expect("Failed to read line");
         if line.trim().is_empty() || line.starts_with('#') {
-            continue; // Skip empty lines/comments
+            continue;
         }
         if let Some((key, value)) = line.split_once('=') {
             env::set_var(key.trim(), value.trim());
@@ -53,7 +53,7 @@ pub fn server_config() -> Result<HashMap<String, ConfigValue>, VarError> {
     println!("connecting to db on the following address: {:?}", db_url);
     config.insert("db".to_string(), db_url);
 
-    let password = ConfigValue::StringValue(env::var("PWD")?);
+    let password = ConfigValue::StringValue(env::var("APP_PASSWORD")?);
     config.insert("pwd".to_string(), password);
 
     config.insert("root_dir".to_string(), ConfigValue::PathValue(root_dir));

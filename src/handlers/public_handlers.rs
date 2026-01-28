@@ -37,7 +37,7 @@ async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
         .collect::<Result<Vec<_>, rusqlite::Error>>()?;
 
     let mut exhib_stmt =
-        conn.prepare("SELECT id, name, location, link, type, start_date, till FROM exhibitions")?;
+        conn.prepare("SELECT id, title, location, link, type, start_date, till FROM exhibitions")?;
 
     let exhibitions = exhib_stmt
         .query_map([], |row| {
@@ -151,7 +151,7 @@ async fn admin(
             })
         })?;
 
-        let mut stmt_exhibitions = conn.prepare("SELECT id, name, start_date FROM exhibitions")?;
+        let mut stmt_exhibitions = conn.prepare("SELECT id, title, start_date FROM exhibitions")?;
         let delete_exhibitions: Vec<DeleteExhibitionAdminTemp> = stmt_exhibitions
             .query_map([], |row| {
                 Ok(DeleteExhibitionAdminTemp {

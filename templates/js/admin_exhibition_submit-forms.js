@@ -48,8 +48,8 @@ document.querySelectorAll(".delete-exhib-btn").forEach(btn => {
             headers: { 'Content-Type': 'application/json' },
             body: json_id
         }).then(r => {
-            if (r.ok) window.location = r.url;
-            else location.reload();
+            if (r.ok) window.location.reload();
+            else console.error("Error deleting exhibition");
         });
 
     });

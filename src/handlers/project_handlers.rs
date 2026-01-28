@@ -180,16 +180,16 @@ async fn delete_project(
             params![delete_project.id],
         )?;
 
-        let delete_projects = conn
-            .prepare("SELECT id, dir, title FROM projects")?
-            .query_map([], |row| {
-                Ok(DeleteProjectAdminTemp {
-                    id: row.get(0)?,
-                    folder_path: row.get(1)?,
-                    name: row.get(2)?,
-                })
-            })?
-            .collect::<Result<Vec<DeleteProjectAdminTemp>, _>>()?;
+        // let delete_projects = conn
+        //     .prepare("SELECT id, dir, title FROM projects")?
+        //     .query_map([], |row| {
+        //         Ok(DeleteProjectAdminTemp {
+        //             id: row.get(0)?,
+        //             folder_path: row.get(1)?,
+        //             name: row.get(2)?,
+        //         })
+        //     })?
+        //     .collect::<Result<Vec<DeleteProjectAdminTemp>, _>>()?;
 
         Ok(HttpResponse::Ok().json(""))
     }

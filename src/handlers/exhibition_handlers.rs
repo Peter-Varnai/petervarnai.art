@@ -15,12 +15,6 @@ pub fn exhibition_service_config(cfg: &mut web::ServiceConfig) {
     cfg.service(add_exhibition).service(delete_exhibition);
 }
 
-// fn delete_folder_with_contents(path: &PathBuf) -> Result<(), ApiError> {
-//     fs::remove_dir_all(path)?;
-//     println!("Folder and all its contents deleted \n {}", path.display());
-//     Ok(())
-// }
-
 // EXHIBITION HANDLERS
 #[post("/exhibition")]
 async fn add_exhibition(
@@ -43,7 +37,7 @@ async fn add_exhibition(
         println!("add exhibition route called");
 
         conn.execute(
-            "INSERT INTO exhibitions (name, start_date, till, location, link, type) 
+            "INSERT INTO exhibitions (title, start_date, till, location, link, type) 
             VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
             params![
                 form.title,
