@@ -61,6 +61,10 @@
 
         <div id="about-window" style="display: none">
             <button id="close-about-btn" onclick="toggleAboutWindow()">close</button>
+            <p class="bio-text">Born in Hungary in 1994, Peter Várnai is a media artist, software-developer and cultural worker based in Vienna, Austria. He finished studying Digital Arts (prof. Ruth Schnell) and gained an MA in arts. In 2022, he co-founded the exhibition space discotec at the Schleifmühlgasse 12-14 in Vienna. 
+            </p><p class="bio-text">
+            His animations are narratives frequently contain humor, take place in novel, uncharted dimensions, and are inherently ludicrous in bizarre way that can only exist in the digital world. The works of Peter are motivated by a desire to bring surprise to both the virtual and the other reality too. Below is a list of exhibitions he participated in either as an artist or as a <span class="curated">curator</span>.</p>
+            <p class="bio-text legend"></p>
             <table class="exhibitions-list">
                 <tbody>
                     {% for year in years %}
@@ -81,7 +85,7 @@
                             {{ row.title }}
                             {% endif %}
                         </td>
-                        <td class="location-cell">
+                        <td class="location-cell {% if row.type == 2 %}curated{% endif %}">
                             {{ row.location }}
                         </td>
                     </tr>

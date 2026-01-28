@@ -59,10 +59,7 @@ h1 {
 
 .container {
     position: absolute;
-
     display: flex;
-    /*display: none;*/
-
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -166,8 +163,13 @@ li {
     /* Firefox */
 }
 
+.bio-text {
+    padding: 0 20px;
+}
+
 .curated {
     font-style: italic;
+    color: dimgrey;
 }
 
 .exhibition_year {

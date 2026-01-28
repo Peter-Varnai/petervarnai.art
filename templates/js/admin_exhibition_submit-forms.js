@@ -16,6 +16,8 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
         type: typeValue,
     };
 
+    console.log(formData)
+
     try {
         const response = await fetch('/exhibition', {
             method: 'POST',
@@ -32,6 +34,7 @@ document.getElementById('exhibitionForm').addEventListener('submit', async (e) =
             console.error('Failed to add exhibition');
         }
     } catch (err) {
+        console.log()
         console.error('Network error:', err);
     }
 });

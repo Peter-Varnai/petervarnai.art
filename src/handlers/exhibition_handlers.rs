@@ -47,7 +47,8 @@ async fn add_exhibition(
                 form.link,
                 form.r#type,
             ],
-        )?;
+        )
+        .expect("error saving exhib to db");
 
         Ok(HttpResponse::Ok().json("succesfully added exhibition"))
     }
