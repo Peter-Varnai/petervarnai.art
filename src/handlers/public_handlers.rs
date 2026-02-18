@@ -1,10 +1,7 @@
 use crate::{
     error::AppError,
-    helpers::return_project,
-    models::{
-        AppState, DeleteExhibitionAdminTemp, DeleteProjectAdminTemp, EditProjectAdminTemp,
-        Exhibition, Project, ProjectQueryRequest, ProjectsIndexTemp,
-    },
+    models::{AppState, DeleteExhibitionAdminTemp, Exhibition, ProjectQueryRequest},
+    services::{project as project_service, site as site_service},
 };
 use actix_identity::Identity;
 use actix_web::{
@@ -12,7 +9,6 @@ use actix_web::{
     web::{self, Data, Query},
     HttpResponse,
 };
-use rusqlite::Connection;
 use std::collections::HashMap;
 use tera::Context;
 
@@ -24,34 +20,8 @@ pub fn public_service_config(cfg: &mut web::ServiceConfig) {
 async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
 
-    let db_path = &state.db;
-    let conn = Connection::open(db_path)?;
-    let mut stmt = conn.prepare("SELECT id, title FROM projects")?;
-    let projects = stmt
-        .query_map([], |row| {
-            Ok(ProjectsIndexTemp {
-                id: row.get(0)?,
-                title: row.get(1)?,
-            })
-        })?
-        .collect::<Result<Vec<_>, rusqlite::Error>>()?;
-
-    let mut exhib_stmt =
-        conn.prepare("SELECT id, title, location, link, type, start_date, till FROM exhibitions")?;
-
-    let exhibitions = exhib_stmt
-        .query_map([], |row| {
-            Ok(Exhibition {
-                id: row.get(0)?,
-                title: row.get(1)?,
-                location: row.get(2)?,
-                link: row.get(3)?,
-                r#type: row.get(4)?,
-                start_date: row.get(5)?,
-                till: row.get(6)?,
-            })
-        })?
-        .collect::<Result<Vec<_>, _>>()?;
+    let projects = site_service::list_projects_index(&state.db)?;
+    let exhibitions = site_service::list_exhibitions(&state.db)?;
 
     let mut exhibitions_by_year: HashMap<String, Vec<Exhibition>> = HashMap::new();
 
@@ -91,9 +61,7 @@ async fn project(
     let project_id: u16 = project.no;
     println!("getting project with id: {}", project_id);
 
-    let db_path = &state.db;
-    let conn = Connection::open(db_path)?;
-    let project = return_project(conn, &project_id).await?;
+    let project = project_service::get_project_by_id(&state.db, project_id)?;
 
     let mut context = Context::new();
     context.insert("project", &project);
@@ -121,46 +89,9 @@ async fn admin(
             .content_type("text/html")
             .body(login_template))
     } else {
-        let db_path = &state.db;
-        let conn = Connection::open(db_path)?;
-
-        let mut stmt_edit_project_list = conn.prepare("SELECT id, title FROM projects")?;
-        let edit_project_list = stmt_edit_project_list
-            .query_map([], |row| {
-                Ok(EditProjectAdminTemp {
-                    project_id: row.get(0)?,
-                    project_title: row.get(1)?,
-                })
-            })?
-            .collect::<Result<Vec<_>, _>>()?;
-
-        let mut stmt_edit_project =
-            conn.prepare("SELECT * FROM projects ORDER BY id DESC LIMIT 1")?;
-        let edit_project: Project = stmt_edit_project.query_row([], |row| {
-            Ok(Project {
-                id: row.get("id")?,
-                title: row.get("title")?,
-                date: row.get("release")?,
-                video_link: row.get("video")?,
-                dir: row.get("dir")?,
-                concept: row.get("concept")?,
-                medium: row.get("medium")?,
-                duration: row.get("duration")?,
-                saved_files: serde_json::from_str(&row.get::<_, String>("pictures")?)
-                    .unwrap_or_default(),
-            })
-        })?;
-
-        let mut stmt_exhibitions = conn.prepare("SELECT id, title, start_date FROM exhibitions")?;
-        let delete_exhibitions: Vec<DeleteExhibitionAdminTemp> = stmt_exhibitions
-            .query_map([], |row| {
-                Ok(DeleteExhibitionAdminTemp {
-                    id: row.get(0)?,
-                    name: row.get(1)?,
-                    start_date: row.get(2)?,
-                })
-            })?
-            .collect::<Result<Vec<_>, _>>()?;
+        let edit_project_list = site_service::admin_edit_project_list(&state.db)?;
+        let edit_project = site_service::admin_latest_project(&state.db)?;
+        let delete_exhibitions = site_service::admin_delete_exhibitions(&state.db)?;
 
         let mut delete_exhibitions_by_year: HashMap<String, Vec<DeleteExhibitionAdminTemp>> =
             HashMap::new();
@@ -178,16 +109,7 @@ async fn admin(
         years.sort();
         years.reverse();
 
-        let delete_projects = conn
-            .prepare("SELECT id, dir, title FROM projects")?
-            .query_map([], |row| {
-                Ok(DeleteProjectAdminTemp {
-                    id: row.get(0)?,
-                    folder_path: row.get(1)?,
-                    name: row.get(2)?,
-                })
-            })?
-            .collect::<Result<Vec<DeleteProjectAdminTemp>, _>>()?;
+        let delete_projects = site_service::admin_delete_projects(&state.db)?;
 
         let mut context = Context::new();
         context.insert("edit_project", &edit_project);
