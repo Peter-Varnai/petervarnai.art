@@ -1,7 +1,7 @@
 use crate::{
     error::AppError,
     models::{AppState, DeleteExhibitionAdminTemp, Exhibition, ProjectQueryRequest},
-    services::{project as project_service, site as site_service},
+    services::{project as project_service, queries as queries_service},
 };
 use actix_identity::Identity;
 use actix_web::{
@@ -20,8 +20,8 @@ pub fn public_service_config(cfg: &mut web::ServiceConfig) {
 async fn index(state: web::Data<AppState>) -> Result<HttpResponse, AppError> {
     let tera = &state.tera;
 
-    let projects = site_service::list_projects_index(&state.db)?;
-    let exhibitions = site_service::list_exhibitions(&state.db)?;
+    let projects = queries_service::list_projects_index(&state.db)?;
+    let exhibitions = queries_service::list_exhibitions(&state.db)?;
 
     let mut exhibitions_by_year: HashMap<String, Vec<Exhibition>> = HashMap::new();
 
@@ -89,9 +89,9 @@ async fn admin(
             .content_type("text/html")
             .body(login_template))
     } else {
-        let edit_project_list = site_service::admin_edit_project_list(&state.db)?;
-        let edit_project = site_service::admin_latest_project(&state.db)?;
-        let delete_exhibitions = site_service::admin_delete_exhibitions(&state.db)?;
+        let edit_project_list = queries_service::admin_edit_project_list(&state.db)?;
+        let edit_project = queries_service::admin_latest_project(&state.db)?;
+        let delete_exhibitions = queries_service::admin_delete_exhibitions(&state.db)?;
 
         let mut delete_exhibitions_by_year: HashMap<String, Vec<DeleteExhibitionAdminTemp>> =
             HashMap::new();
@@ -109,7 +109,7 @@ async fn admin(
         years.sort();
         years.reverse();
 
-        let delete_projects = site_service::admin_delete_projects(&state.db)?;
+        let delete_projects = queries_service::admin_delete_projects(&state.db)?;
 
         let mut context = Context::new();
         context.insert("edit_project", &edit_project);

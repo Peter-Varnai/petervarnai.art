@@ -8,12 +8,29 @@ use std::{
     path::{Path, PathBuf},
 };
 
+/// Helper to extract a text field from multipart form data
+async fn extract_text_field(field: &mut actix_multipart::Field) -> Result<String, AppError> {
+    let mut value = Vec::new();
+    while let Some(chunk) = field.try_next().await? {
+        value.extend_from_slice(&chunk);
+    }
+    Ok(String::from_utf8_lossy(&value).into_owned())
+}
+
+/// Helper to extract an optional text field (returns None if empty)
+async fn extract_optional_field(
+    field: &mut actix_multipart::Field,
+) -> Result<Option<String>, AppError> {
+    let text = extract_text_field(field).await?;
+    Ok(if text.is_empty() { None } else { Some(text) })
+}
+
 pub async fn handle_project_form(
     edit: bool,
     mut payload: Multipart,
     root_dir: &PathBuf,
 ) -> Result<Project, AppError> {
-    let mut id: u16 = 000;
+    let mut id: u16 = 0;
     let mut title = String::new();
     let mut date = String::new();
     let mut video_link = None;
@@ -37,64 +54,22 @@ pub async fn handle_project_form(
 
         if let Some(name) = content_disposition.get_name() {
             match name {
-                "title" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    title = String::from_utf8_lossy(&value).into_owned();
-                }
-                "dir" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    dir = String::from_utf8(value).unwrap();
-                }
+                "title" => title = extract_text_field(&mut field).await?,
+                "dir" => dir = extract_text_field(&mut field).await?,
                 "id" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    id = String::from_utf8(value).unwrap().parse::<u16>().unwrap();
+                    id = extract_text_field(&mut field)
+                        .await?
+                        .parse::<u16>()
+                        .expect("Invalid id format");
                 }
-                "medium" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    medium = Some(String::from_utf8_lossy(&value).into_owned());
-                }
-                "duration" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    duration = Some(String::from_utf8(value).unwrap());
-                }
-                "date" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    date = String::from_utf8(value).unwrap();
-                }
-                "video_link" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    video_link = Some(String::from_utf8(value).unwrap());
-                }
-                "concept" => {
-                    let mut value = Vec::new();
-                    while let Some(chunk) = field.try_next().await? {
-                        value.extend_from_slice(&chunk);
-                    }
-                    concept = String::from_utf8_lossy(&value).into_owned();
-                }
+                "medium" => medium = extract_optional_field(&mut field).await?,
+                "duration" => duration = extract_optional_field(&mut field).await?,
+                "date" => date = extract_text_field(&mut field).await?,
+                "video_link" => video_link = extract_optional_field(&mut field).await?,
+                "concept" => concept = extract_text_field(&mut field).await?,
                 "files" if !edit => {
-                    let filename = String::from(content_disposition.get_filename().unwrap_or("pic"));
+                    let filename =
+                        String::from(content_disposition.get_filename().unwrap_or("pic"));
                     let filepath = folder_name.join(&filename);
                     let mut f = fs::File::create(filepath)?;
                     while let Some(chunk) = field.try_next().await? {
