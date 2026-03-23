@@ -6,9 +6,10 @@ mod middleware;
 mod models;
 mod services;
 
-#[allow(unexpected_cfgs)]
 #[cfg(test)]
 mod tests;
+#![allow(unexpected_cfgs)]
+
 use actix_files::Files;
 use actix_identity::IdentityMiddleware;
 use actix_session::{storage::CookieSessionStore, SessionMiddleware};

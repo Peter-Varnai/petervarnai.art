@@ -18,6 +18,7 @@ pub struct DeleteExhibitionRequest {
 #[derive(Deserialize)]
 pub struct DeleteProjectRequest {
     pub id: u16,
+    #[allow(dead_code)]
     pub folder_path: String,
 }
 

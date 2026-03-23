@@ -43,10 +43,15 @@ pub fn server_config() -> Result<ServerConfig, VarError> {
 
     println!("app running at {:?}:{:?}", host, port);
 
-    let root_dir = PathBuf::from(env::var("ROOT_DIR")?);
+    let root_dir = env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
 
     let db_path = env::var("DB")?;
-    let db = root_dir.join(db_path);
+    let db = PathBuf::from(&db_path);
+    let db = if db.is_absolute() {
+        db
+    } else {
+        root_dir.join(db_path)
+    };
 
     println!("connecting to db on the following address: {:?}", db);
 
