@@ -23,6 +23,8 @@
             sqlite
             openssl
             pkg-config
+            rust
+            gcc
           ];
         };
       }
