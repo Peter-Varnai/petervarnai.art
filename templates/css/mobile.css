@@ -3,6 +3,7 @@
     .container {
         justify-content: flex-end;
         align-items: flex-end;
+        height: 100dvh;
     }
 
     /* .loading-screen-container { */
