@@ -290,6 +290,8 @@ tr {
 
 .primary-image {
     width: 100%;
+    max-height: 60vh;
+    object-fit: contain;
 }
 
 .thumbnail-image {
