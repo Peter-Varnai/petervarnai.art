@@ -1,9 +1,7 @@
 use crate::{
     error::AppError,
     middleware::RequireAdmin,
-    models::{
-        AppState, DeleteProjectRequest, PicDeleteRequest, ProjectQueryRequest,
-    },
+    models::{AppState, DeleteProjectRequest, PicDeleteRequest, ProjectQueryRequest},
     services::project as project_service,
 };
 
@@ -39,8 +37,6 @@ async fn get_project(
     project: Query<ProjectQueryRequest>,
 ) -> Result<HttpResponse, AppError> {
     let project_id: u16 = project.no;
-    println!("GET : getting project with id: {}", project_id);
-
     let project = project_service::get_project_by_id(&state.db, project_id)?;
 
     Ok(HttpResponse::Ok()
@@ -48,10 +44,7 @@ async fn get_project(
         .json(project))
 }
 
-async fn add_project(
-    state: Data<AppState>,
-    payload: Multipart,
-) -> Result<HttpResponse, AppError> {
+async fn add_project(state: Data<AppState>, payload: Multipart) -> Result<HttpResponse, AppError> {
     project_service::create_project(&state, payload).await?;
     Ok(HttpResponse::Ok().body("Success"))
 }
@@ -61,16 +54,13 @@ async fn update_project(
     payload: Multipart,
 ) -> Result<HttpResponse, AppError> {
     project_service::update_project(&state, payload).await?;
-    Ok(HttpResponse::Found()
-        .append_header(("Location", "/admin"))
-        .finish())
+    Ok(HttpResponse::Ok().json(""))
 }
 
 async fn delete_project(
     state: Data<AppState>,
     delete_project: Json<DeleteProjectRequest>,
 ) -> Result<HttpResponse, AppError> {
-    println!("delete project called");
     project_service::delete_project(&state, &delete_project)?;
     Ok(HttpResponse::Ok().json(""))
 }
@@ -92,7 +82,6 @@ pub async fn delete_project_image(
     body: web::Json<PicDeleteRequest>,
 ) -> Result<HttpResponse, AppError> {
     let dir = path.into_inner();
-
     let resp = project_service::delete_project_image(&state, dir, &body)?;
     Ok(HttpResponse::Ok().json(resp))
 }

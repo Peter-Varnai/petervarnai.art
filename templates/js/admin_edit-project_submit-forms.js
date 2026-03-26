@@ -10,7 +10,7 @@ document.querySelectorAll('.editProjectBtn').forEach(btn => {
                 form.querySelector('input[name="video_link"]').value = project.video_link || '';
                 form.querySelector('input[name="medium"]').value = project.medium || '';
                 form.querySelector('input[name="duration"]').value = project.duration || '';
-                form.querySelector('textarea[name="concept"]').value = project.concept;
+                window.editConceptQuill.root.innerHTML = project.concept || '';
                 form.querySelector('input[name="dir"]').value = project.dir;
                 form.querySelector('input[name="id"]').value = project.id;
                 renderImageGallery(project);

@@ -7,6 +7,8 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Sixtyfour+Convergence&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
         <link rel="stylesheet" href="/f/css/admin.css">
     </head>
 
@@ -59,9 +61,9 @@
 
                 <div class="full-width">
                     <label>Concept:</label>
-                    <textarea name="concept" rows="5" required placeholder="Describe the project concept..."></textarea>
+                    <div class="quill-editor" id="addConceptEditor"></div>
+                    <input type="hidden" name="concept">
                 </div>
-
                 <div class="full-width">
                     <label>📷 Upload pictures:</label>
                     <input type="file" name="files" multiple accept="image/*">
@@ -117,7 +119,8 @@
 
                 <div class="full-width">
                     <label>Concept:</label>
-                    <textarea name="concept" rows="5">{{ edit_project.concept }}</textarea>
+                    <div class="quill-editor" id="editConceptEditor"></div>
+                    <input type="hidden" name="concept" value="{{ edit_project.concept }}">
                 </div>
 
                 <input type="hidden" name="dir" value="{{ edit_project.dir }}">
@@ -250,6 +253,25 @@
             🔓 Logout
         </button>
     </div>
+    <script>
+        const addConceptQuill = new Quill('#addConceptEditor', {
+            theme: 'snow',
+            placeholder: 'Describe the project concept...'
+        });
+
+        const editConceptQuill = new Quill('#editConceptEditor', {
+            theme: 'snow',
+            placeholder: 'Describe the project concept...'
+        });
+
+        window.editConceptQuill = editConceptQuill;
+
+        // Populate edit form Quill editor with pre-loaded concept
+        const editConceptInput = document.querySelector('#editProjectForm input[name="concept"]');
+        if (editConceptInput && editConceptInput.value) {
+            editConceptQuill.root.innerHTML = editConceptInput.value;
+        }
+    </script>
     <script>
         function updateTillVisibility() {
             const selectedType = document.querySelector('input[name="type"]:checked').value;

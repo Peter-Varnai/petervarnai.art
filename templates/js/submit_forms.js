@@ -2,6 +2,10 @@
 document.getElementById('addProjectForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const form = e.target;
+    
+    const conceptInput = form.querySelector('input[name="concept"]');
+    conceptInput.value = addConceptQuill.root.innerHTML;
+    
     const formData = new FormData(form);
 
     fetch('/project', {
@@ -24,6 +28,10 @@ document.getElementById('addProjectForm').addEventListener('submit', function(e)
 document.getElementById('editProjectForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const form = e.target;
+    
+    const conceptInput = form.querySelector('input[name="concept"]');
+    conceptInput.value = window.editConceptQuill.root.innerHTML;
+    
     const formData = new FormData(form);
 
     fetch('/project', {

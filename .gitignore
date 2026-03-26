@@ -4,5 +4,6 @@
 /templates/dist/
 /templates/static/
 /sajat_weblap.db
+/petervarnai_art.db
 /.vite
 /.env
