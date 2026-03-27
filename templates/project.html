@@ -4,7 +4,6 @@
     <div class="pic-thumbnails" >
         {% for pic in project.saved_files %}
         {% if loop.first %}
-        <!-- <img class="primary-image" src="/f/static/images/{{project.dir}}/{{pic}}"> -->
         {% else %}
         <img class="thumbnail-image" onclick="changePrimaryImage(this)" src="/f/static/images/{{project.dir}}/{{pic}}">
         {% endif %}
@@ -21,10 +20,12 @@
                 <td class="details-type">medium:</td>
                 <td class="details-content">{{project.medium}}</td>
             </tr>
+            {% if project.duration %}
             <tr class="details-row">
                 <td class="details-type">duration:</td>
                 <td class="details-content">{{project.duration}}</td>
             </tr>
+            {% endif %}
             <tr class="details-row">
                 <td class="details-type">released:</td>
                 <td class="details-content">{{project.date}}</td>
