@@ -1,12 +1,15 @@
 <div class="project-panel-info">
     <div class="images-panel" id="images-panel">
+    <img class="primary-image" src="/f/static/images/{{project.dir}}/{{project.saved_files[0]}}">
+    <div class="pic-thumbnails" >
         {% for pic in project.saved_files %}
         {% if loop.first %}
-        <img class="primary-image" src="/f/static/images/{{project.dir}}/{{pic}}">
+        <!-- <img class="primary-image" src="/f/static/images/{{project.dir}}/{{pic}}"> -->
         {% else %}
         <img class="thumbnail-image" onclick="changePrimaryImage(this)" src="/f/static/images/{{project.dir}}/{{pic}}">
         {% endif %}
         {% endfor %}
+    </div>
     </div>
     <div id="description-panel">
         <table id="details-table">
