@@ -75,6 +75,7 @@ async fn main() -> std::io::Result<()> {
                 secret_key.clone(),
             ))
             .service(Files::new("/f", "./templates").show_files_listing())
+            .service(Files::new("/d", "./templates/dist"))
             .app_data(Data::new(state.clone()))
             .configure(public_service_config)
             .configure(admin_service_config)

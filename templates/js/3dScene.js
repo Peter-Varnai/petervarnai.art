@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js'
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js'
-import {ShaderPass, EffectComposer} from 'postprocessing';
-import {AnimationMixer, DataTexture, FloatType, MathUtils, Object3D, RedFormat, ShaderMaterial} from "three";
-import {CSS3DObject, CSS3DRenderer} from "three/addons";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { ShaderPass, EffectComposer } from 'postprocessing';
+import { AnimationMixer, DataTexture, FloatType, MathUtils, Object3D, RedFormat, ShaderMaterial } from "three";
+import { CSS3DObject, CSS3DRenderer } from "three/addons";
 
 
 let WIDTH = window.innerWidth
@@ -17,6 +17,8 @@ const shadowScene = new THREE.Scene()
 
 const camera = new THREE.PerspectiveCamera(mql ? 16 : 13, WIDTH / HEIGHT, 0.1, 1000)
 camera.position.set(8, 21, 48)
+const shadowCamera = new THREE.PerspectiveCamera(mql ? 16 : 13, WIDTH / HEIGHT, 0.1, 1000)
+shadowCamera.position.set(8, 21, 48)
 const renderer = new THREE.WebGLRenderer()
 renderer.shadowMap.enabled = true
 
@@ -59,13 +61,13 @@ scene.add(pLight)
 const gltfLoader = new GLTFLoader()
 let fireMixer, shadowFireMixer, kbbMixer, engineFire, kbbRocket, kbbRotationGroup, kbbRocketShadow, camTrgt,
     camTrgtMixer, engineBody, engineMixer, kbbFloats, shadowMixer, shadowEngineFire, lampsMixer, interfaceLamps,
-    camTrgtMobile, engineFireShadow
+    camTrgtMobile, engineFireShadow, camJitterMixer, camJitterAction
 const fallAnimArr = []
 
 
 function loadScene() {
     return new Promise((resolve, reject) => {
-        gltfLoader.load('/3dFiles/kebabGLB.glb', function (glb) {
+        gltfLoader.load('/f/3dFiles/kebabGLB.glb', function(glb) {
             const root = glb.scene
             scene.add(root.clone())
             shadowScene.add(root)
@@ -84,6 +86,7 @@ function loadScene() {
             camTrgt = scene.getObjectByName('camTrgt')
             camTrgtMobile = scene.getObjectByName('camTrgtmobile')
             camera.lookAt(mql ? camTrgtMobile.position : camTrgt.position)
+            shadowCamera.lookAt(mql ? camTrgtMobile.position : camTrgt.position)
 
 
             // animation mixer setup
@@ -113,7 +116,7 @@ function loadScene() {
 
 
             // switching on shadows
-            kbbRocket.traverse(function (item) {
+            kbbRocket.traverse(function(item) {
                 if (item instanceof THREE.Mesh) {
                     item.receiveShadow = true
                     item.castShadow = true
@@ -267,6 +270,30 @@ function loadScene() {
             })
 
 
+            // camera micro-jitter
+            camJitterMixer = new AnimationMixer(camera)
+            const jitterTimes = []
+            const jitterValues = []
+            const jitterFrameCount = 25
+            const baseCamPos = [8, 21, 48]
+            const jitterRange = 1.665
+
+            for (let i = 0; i < jitterFrameCount; i++) {
+                jitterTimes.push(i * 25 / jitterFrameCount)
+                jitterValues.push(
+                    baseCamPos[0] + (Math.random() - 0.5) * jitterRange,
+                    baseCamPos[1] + (Math.random() - 0.5) * jitterRange,
+                    baseCamPos[2] + (Math.random() - 0.5) * jitterRange
+                )
+            }
+            jitterValues[jitterValues.length - 3] = jitterValues[0]
+            jitterValues[jitterValues.length - 2] = jitterValues[1]
+            jitterValues[jitterValues.length - 1] = jitterValues[2]
+            const jitterTrack = new THREE.KeyframeTrack('.position', jitterTimes, jitterValues)
+            const jitterClip = new THREE.AnimationClip('camJitter', 25, [jitterTrack])
+            camJitterAction = camJitterMixer.clipAction(jitterClip)
+            camJitterAction.play()
+
             // ground setup
             const ground = shadowScene.getObjectByName('ground')
             scene.getObjectByName('ground').visible = false
@@ -277,7 +304,7 @@ function loadScene() {
             ground.receiveShadow = true
 
             resolve()
-        }, undefined, function (error) {
+        }, undefined, function(error) {
             reject(error)
         })
     })
@@ -310,18 +337,18 @@ const compositRenderTarget2 = new THREE.WebGLRenderTarget(WIDTH, HEIGHT)
 
 const digitalGlitch = {
     uniforms: {
-        tDiffuse: {value: compositRenderTarget1.texture}, //diffuse texture
-        input2: {value: compositRenderTarget2.texture},
-        tDisp: {value: generateHeightmap(randFloat())}, //displacement texture for digital glitch squares
-        byp: {value: 1}, //apply the glitch ?
-        amount: {value: 0.0018},
-        angle: {value: 0.02},
-        seed: {value: 0.122},
-        seed_x: {value: 0.02}, //-1,1
-        seed_y: {value: 0.02}, //-1,1
-        distortion_x: {value: 0.0},
-        distortion_y: {value: 0.0},
-        col_s: {value: 0.01}
+        tDiffuse: { value: compositRenderTarget1.texture }, //diffuse texture
+        input2: { value: compositRenderTarget2.texture },
+        tDisp: { value: generateHeightmap(randFloat()) }, //displacement texture for digital glitch squares
+        byp: { value: 1 }, //apply the glitch ?
+        amount: { value: 0.0018 },
+        angle: { value: 0.02 },
+        seed: { value: 0.122 },
+        seed_x: { value: 0.02 }, //-1,1
+        seed_y: { value: 0.02 }, //-1,1
+        distortion_x: { value: 0.0 },
+        distortion_y: { value: 0.0 },
+        col_s: { value: 0.01 }
     },
     vertexShader: `
 		varying vec2 vUv;
@@ -430,7 +457,7 @@ kbbFloats = true
 
 
 // Animating the glitch
-setInterval(function () {
+setInterval(function() {
     digitalGlitch.uniforms.seed.value = randFloat(-1, 1)
     digitalGlitch.uniforms.seed_x.value = randFloat(-1, 1)
     digitalGlitch.uniforms.seed_y.value = randFloat(-1, 1)
@@ -472,6 +499,7 @@ function playFall() {
         anim.paused = false
         anim.play()
     })
+    camJitterAction.paused = true
     engineFire.children.forEach(fire => fire.visible = !fire.visible)
     engineFireShadow.children.forEach(fire => fire.visible = !fire.visible)
     console.log(camTrgt.position)
@@ -497,6 +525,7 @@ function resetFall() {
         })
 
         kbbFloats = !kbbFloats
+        camJitterAction.paused = false
 
         engineFire.children.forEach(fire => fire.visible = !fire.visible)
         engineFireShadow.children.forEach(fire => fire.visible = !fire.visible)
@@ -511,14 +540,19 @@ document.getElementById('bottom-works-menupoint').addEventListener('click', play
 document.getElementById('close-about-btn').addEventListener('click', resetFall)
 
 
-window.addEventListener('resize', function () {
+window.addEventListener('resize', function() {
     mql = window.matchMedia('(max-width: 640px)').matches
     renderer.setSize(window.innerWidth, window.innerHeight)
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
 
+    shadowCamera.aspect = window.innerWidth / window.innerHeight
+    shadowCamera.updateProjectionMatrix()
+    shadowCamera.fov = mql ? 16 : 13
+
     // page resizing adjustments
     camera.lookAt(mql ? camTrgtMobile.position : camTrgt.position)
+    shadowCamera.lookAt(mql ? camTrgtMobile.position : camTrgt.position)
     camera.fov = mql ? 16 : 13
     mql ? shadowLight.position.set(1, 20, -9) : shadowLight.position.set(12, 23.3, 22)
 })
@@ -537,6 +571,7 @@ function animate() {
     engineMixer.update(delta)
     camTrgtMixer.update(delta)
     lampsMixer.update(delta)
+    if (kbbFloats) camJitterMixer.update(delta)
 
     // random glitches
     randomGlitch(elapsedTime)
@@ -560,7 +595,7 @@ function animate() {
     renderer.render(scene, camera)
     renderer.setRenderTarget(null)
     renderer.setRenderTarget(compositRenderTarget2)
-    renderer.render(shadowScene, camera)
+    renderer.render(shadowScene, shadowCamera)
     renderer.setRenderTarget(null)
 
     composer.render()
